@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mirror Gram v2</title>
+<style>
+:root{--green:#159447;--dark:#0d6b34;--light:#eefaf2;--text:#173122;--muted:#6b7c71;--line:#dce9df}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f7fbf8;color:var(--text)}
+.app{max-width:1250px;margin:auto;display:grid;grid-template-columns:220px 1fr 250px;gap:18px;padding:18px}
+.side,.right{position:sticky;top:18px;height:fit-content}.brand{font-size:25px;font-weight:800;color:var(--green);padding:12px}
+nav button{display:block;width:100%;padding:12px;margin:4px 0;border:0;border-radius:12px;background:transparent;text-align:left;color:var(--text)}
+nav button:hover,nav button.active{background:var(--light);color:var(--dark);font-weight:700}
+.card{background:white;border:1px solid var(--line);border-radius:17px;padding:17px;margin-bottom:15px;box-shadow:0 5px 22px #15944712}
+.page{display:none}.page.active{display:block}.top{display:flex;justify-content:space-between;align-items:center}
+.avatar{width:44px;height:44px;border-radius:50%;background:#53bd78;color:white;display:grid;place-items:center;font-weight:800}
+.user{display:flex;align-items:center;gap:10px}.user small{display:block;color:var(--muted);margin-top:3px}
+.row{display:flex;gap:9px;align-items:center}.between{justify-content:space-between}
+button,input,textarea,select{font:inherit}button{cursor:pointer}
+.primary{background:var(--green);color:white;border:0;border-radius:10px;padding:10px 14px;font-weight:700}
+.secondary,.actions button{background:white;border:1px solid var(--line);border-radius:10px;padding:9px 12px}
+input,textarea,select{width:100%;padding:11px;border:1px solid var(--line);border-radius:10px;margin:6px 0 12px}
+textarea{min-height:100px}.muted{color:var(--muted)}.pill{background:var(--light);color:var(--dark);padding:6px 10px;border-radius:99px;font-size:12px;font-weight:700}
+.postmedia{height:330px;margin:14px -17px;background:var(--light);display:grid;place-items:center;overflow:hidden;font-size:45px;color:var(--green)}
+.postmedia img,.postmedia video{width:100%;height:100%;object-fit:cover}.actions{display:flex;gap:8px}
+.chips{display:flex;gap:7px;overflow:auto}.chips button{white-space:nowrap;border:1px solid var(--line);background:white;border-radius:99px;padding:8px 12px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}.grid div{height:125px;background:var(--light);display:grid;place-items:center;font-size:28px}
+.map{height:360px;background:#dff1e4;position:relative;border-radius:14px;overflow:hidden}.road{position:absolute;background:white;width:120%;height:40px;left:-10%;top:45%;transform:rotate(25deg)}.pin{position:absolute;background:var(--green);color:white;border-radius:50%;padding:9px}
+.chat{height:320px;overflow:auto;background:#f3faf5;border-radius:12px;padding:12px}.bubble{padding:9px 12px;border-radius:13px;max-width:75%;margin:7px 0}.mine{margin-left:auto;background:#d9f3e2}.theirs{background:white;border:1px solid var(--line)}
+.mobile{display:none}
+@media(max-width:950px){.app{grid-template-columns:180px 1fr}.right{display:none}}
+@media(max-width:650px){.app{display:block;padding:10px}.side{display:none}.mobile{display:flex;position:fixed;bottom:0;left:0;right:0;background:white;border-top:1px solid var(--line);z-index:9;justify-content:space-around;padding:6px}.mobile button{border:0;background:white;font-size:19px}.main{padding-bottom:65px}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="side"><div class="brand">🌱 Mirror Gram</div>
+<nav>
+<button class="active" onclick="page('home',this)">🏠 Home</button>
+<button onclick="page('discover',this)">🔎 Discover</button>
+<button onclick="page('create',this)">➕ Create</button>
+<button onclick="page('messages',this)">💬 Messages</button>
+<button onclick="page('map',this)">🗺️ Map</button>
+<button onclick="page('live',this)">🔴 Live</button>
+<button onclick="page('profile',this)">👤 Profile</button>
+<button onclick="page('studio',this)">📈 Creator Studio</button>
+<button onclick="page('safety',this)">🛡️ Safety</button>
+</nav></aside>
+
+<main class="main">
+<section id="home" class="page active"><div class="top"><h1>Home</h1><span class="pill">Green community</span></div><div id="feed"></div></section>
+
+<section id="discover" class="page"><div class="top"><h1>Discover</h1></div>
+<div class="card"><input id="search" placeholder="Search creators or topics" oninput="discover()"><div class="chips"><button>Music</button><button>Gaming</button><button>Art</button><button>Comedy</button><button>Sport</button></div></div><div id="discoverList"></div></section>
+
+<section id="create" class="page"><h1>Create</h1><div class="card">
+<h3>Make a post</h3><input id="file" type="file" accept="image/*,video/*" onchange="preview(event)">
+<div id="preview" class="muted">Choose a photo or video to preview it here.</div>
+<textarea id="caption" placeholder="Write a caption..."></textarea>
+<select id="visibility"><option>Everyone</option><option>Followers</option><option>Private</option></select>
+<button class="primary" onclick="publish()">Publish demo post</button>
+</div></section>
+
+<section id="messages" class="page"><h1>Messages</h1><div class="card" id="chats"></div>
+<div class="card" id="conversation" style="display:none"><div class="row between"><b id="chatName"></b><button class="secondary" onclick="closeChat()">Back</button></div>
+<div id="chat" class="chat"></div><div class="row"><input id="msg" placeholder="Message..." style="margin:8px 0"><button class="primary" onclick="send()">Send</button></div></div></section>
+
+<section id="map" class="page"><h1>Map</h1><div class="card"><div class="pill">Public events only</div><p class="muted">The real app should never reveal a young person's exact private location.</p>
+<div class="map"><div class="road"></div><div class="pin" style="left:25%;top:25%">★</div><div class="pin" style="left:65%;top:60%">♪</div><div class="pin" style="left:48%;top:75%">●</div></div></div></section>
+
+<section id="live" class="page"><h1>Live</h1><div class="card"><h3>Start a live stream</h3><p class="muted">Prototype only. Production live streaming requires server-side streaming, moderation, reporting and age-safety controls.</p>
+<input id="liveTitle" placeholder="Live title"><button class="primary" onclick="live()">Start demo live</button></div></section>
+
+<section id="profile" class="page"><div class="card"><div class="user"><div class="avatar">MG</div><div><h2 style="margin:0">Mirror Creator</h2><small>@mirrorcreator · Creator</small></div></div>
+<p>Sharing creative projects and positive community moments.</p><div class="row"><b>24 Posts</b><b>1.2K Followers</b><b>310 Following</b></div></div>
+<div class="card"><h3>Posts</h3><div class="grid"><div>🎵</div><div>🎨</div><div>🎮</div><div>📷</div><div>✨</div><div>🌱</div></div></div></section>
+
+<section id="studio" class="page"><h1>Creator Studio</h1><div class="card"><h3>Creator Journey</h3><p>🌱 Complete your profile</p><p>🎬 Publish your first post</p><p>💬 Build a positive community</p><p>🛡️ Keep your account safe</p></div>
+<div class="card"><h3>Demo analytics</h3><div class="row"><b>8.4K Views</b><b>640 Likes</b><b>72 Shares</b></div></div></section>
+
+<section id="safety" class="page"><h1>Safety Center</h1><div class="card"><h3>Community controls</h3><p class="muted">Production launch should include strong privacy, blocking, reporting, moderation and age-appropriate protections.</p>
+<button class="secondary" onclick="alert('Demo: report submitted.')">Report content</button> <button class="secondary" onclick="alert('Demo: account blocked.')">Block account</button></div>
+<div class="card"><h3>Privacy</h3><label><input type="checkbox" checked> Hide exact location</label><label><input type="checkbox" checked> Review message requests</label></div></section>
+</main>
+
+<aside class="right"><div class="card"><h3>Creator Journey</h3><p>🌱 Profile</p><p>🎬 Create</p><p>💬 Community</p><p>🛡️ Safety</p></div></aside>
+</div>
+<div class="mobile"><button onclick="page('home')">🏠</button><button onclick="page('discover')">🔎</button><button onclick="page('create')">➕</button><button onclick="page('messages')">💬</button><button onclick="page('profile')">👤</button></div>
+
+<script>
+let creators=[
+{name:"Luna Beats",handle:"@lunabeats",type:"Music",likes:128,followed:false,icon:"🎵",text:"A new creative session from today."},
+{name:"Jay Creates",handle:"@jaycreates",type:"Art",likes:94,followed:false,icon:"🎨",text:"Trying a new creative style."},
+{name:"Pixel Nova",handle:"@pixelnova",type:"Gaming",likes:207,followed:true,icon:"🎮",text:"Sharing some building ideas."}
+];
+let chats=[{name:"Luna Beats",m:[["theirs","Hey! Great post!"],["mine","Thanks!"]]},{name:"Jay Creates",m:[["theirs","Want to collaborate?"],["mine","Sounds good!"]]}],current=-1;
+function page(id,btn){document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));document.getElementById(id).classList.add("active");document.querySelectorAll("nav button").forEach(x=>x.classList.remove("active"));if(btn)btn.classList.add("active");if(id==="discover")discover();if(id==="messages")renderChats()}
+function feed(){document.getElementById("feed").innerHTML=creators.map((c,i)=>`<article class="card"><div class="row between"><div class="user"><div class="avatar">${c.name[0]}</div><div><b>${c.name}</b><small>${c.handle} · ${c.type}</small></div></div><button class="secondary" onclick="follow(${i})">${c.followed?"Following":"Follow"}</button></div><div class="postmedia">${c.media?`<img src="${c.media}">`:c.icon}</div><p>${c.text}</p><div class="actions"><button onclick="like(this,${c.likes})">♡ ${c.likes}</button><button onclick="alert('Demo comment panel')">💬 Comment</button><button onclick="alert('Demo share menu')">↗ Share</button></div></article>`).join("")}
+function like(b,n){let on=b.dataset.on==="1";b.dataset.on=on?"0":"1";b.textContent=(on?"♡ ":"♥ ")+(n+(on?-1:1))}
+function follow(i){creators[i].followed=!creators[i].followed;feed();discover()}
+function discover(){let q=(document.getElementById("search")?.value||"").toLowerCase();document.getElementById("discoverList").innerHTML=creators.filter(c=>(c.name+c.handle+c.type).toLowerCase().includes(q)).map((c,i)=>`<div class="card"><div class="row between"><div class="user"><div class="avatar">${c.name[0]}</div><div><b>${c.name}</b><small>${c.handle} · ${c.type}</small></div></div><button class="primary" onclick="follow(${i})">${c.followed?"Following":"Follow"}</button></div></div>`).join("")}
+function preview(e){let f=e.target.files[0];if(!f)return;let u=URL.createObjectURL(f);document.getElementById("preview").innerHTML=f.type.startsWith("video/")?`<video src="${u}" controls style="width:100%;max-height:300px"></video>`:`<img src="${u}" style="max-width:100%;max-height:300px;border-radius:12px">`;document.getElementById("preview").dataset.url=u}
+function publish(){let text=document.getElementById("caption").value.trim()||"My new Mirror Gram post!";creators.unshift({name:"You",handle:"@you",type:"Creator",likes:0,followed:false,icon:"✨",text:text,media:document.getElementById("preview").dataset.url||""});alert("Demo post published locally.");feed();page("home")}
+function live(){alert("Demo live created: "+(document.getElementById("liveTitle").value||"My Mirror Gram Live"))}
+function renderChats(){document.getElementById("chats").innerHTML=chats.map((c,i)=>`<button style="width:100%;padding:12px;border:0;border-bottom:1px solid var(--line);background:white;text-align:left" onclick="openChat(${i})"><div class="user"><div class="avatar">${c.name[0]}</div><div><b>${c.name}</b><small>${c.m[c.m.length-1][1]}</small></div></div></button>`).join("")}
+function openChat(i){current=i;document.getElementById("conversation").style.display="block";document.getElementById("chatName").textContent=chats[i].name;renderChat()}
+function closeChat(){current=-1;document.getElementById("conversation").style.display="none"}
+function renderChat(){document.getElementById("chat").innerHTML=chats[current].m.map(x=>`<div class="bubble ${x[0]==="mine"?"mine":"theirs"}">${x[1]}</div>`).join("");document.getElementById("chat").scrollTop=99999}
+function send(){let i=document.getElementById("msg"),v=i.value.trim();if(!v||current<0)return;chats[current].m.push(["mine",v]);i.value="";renderChat()}
+feed();discover();
+</script>
+</body>
+</html>

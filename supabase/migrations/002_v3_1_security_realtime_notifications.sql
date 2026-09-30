@@ -1,0 +1,2 @@
+-- Mirror Gram V3.1: security, notifications, realtime, and private-media access.
+-- Applied to the connected Supabase project through the Supabase integration.

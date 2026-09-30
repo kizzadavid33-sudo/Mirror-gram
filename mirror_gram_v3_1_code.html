@@ -1,0 +1,1300 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mirror Gram V3.1 Source</title><style>body{font-family:system-ui;margin:0;background:#f6faf7;color:#102019}header{background:#168a4a;color:#fff;padding:20px;position:sticky;top:0}main{padding:18px}details{background:#fff;border:1px solid #dfe9e3;border-radius:12px;margin:10px 0;padding:10px}summary{cursor:pointer;font-weight:700;color:#0d5f35}pre{overflow:auto;background:#f2f7f3;padding:14px;border-radius:8px;white-space:pre-wrap}</style></head><body><header><h1>Mirror Gram V3.1 Source Code</h1><p>Supabase-connected starter source. Secrets are intentionally excluded.</p></header><main><details><summary>PROJECT_MANIFEST.json</summary><pre>{
+  &quot;project&quot;: &quot;Mirror Gram&quot;,
+  &quot;version&quot;: &quot;V3.1&quot;,
+  &quot;supabase_project_ref&quot;: &quot;fkbbpovlhrpbclnmmtbu&quot;,
+  &quot;database_tables&quot;: [
+    &quot;profiles&quot;,
+    &quot;posts&quot;,
+    &quot;media&quot;,
+    &quot;follows&quot;,
+    &quot;likes&quot;,
+    &quot;comments&quot;,
+    &quot;saved_posts&quot;,
+    &quot;blocks&quot;,
+    &quot;conversations&quot;,
+    &quot;conversation_members&quot;,
+    &quot;messages&quot;,
+    &quot;notifications&quot;,
+    &quot;reports&quot;,
+    &quot;live_streams&quot;,
+    &quot;public_events&quot;
+  ],
+  &quot;storage_buckets&quot;: [
+    &quot;avatars&quot;,
+    &quot;post-media&quot;
+  ],
+  &quot;secrets_included&quot;: false,
+  &quot;features&quot;: [
+    &quot;auth SSR&quot;,
+    &quot;real feed&quot;,
+    &quot;media upload&quot;,
+    &quot;likes&quot;,
+    &quot;comments&quot;,
+    &quot;saves&quot;,
+    &quot;creator discovery&quot;,
+    &quot;profiles&quot;,
+    &quot;realtime messaging&quot;,
+    &quot;notifications&quot;,
+    &quot;reports&quot;,
+    &quot;safety center&quot;
+  ]
+}</pre></details><details><summary>README.md</summary><pre># Mirror Gram V3
+
+Mirror Gram is a green/white social platform foundation with profiles, posts,
+media, follows, likes, comments, saves, blocks, messaging, notifications,
+reports, livestream records, and public creator events.
+
+## What is already live in Supabase
+
+The connected Supabase project already contains the V3 database foundation:
+profiles, posts, media, follows, likes, comments, saved_posts, blocks,
+conversations, conversation_members, messages, notifications, reports,
+live_streams, public_events, RLS policies, indexes, and the avatars/post-media
+storage buckets.
+
+## Web
+
+Requirements: Node.js 20+.
+
+1. Copy `apps/web/.env.example` to `apps/web/.env.local`.
+2. Put your Supabase project URL and publishable key in that file.
+3. Run:
+
+```bash
+npm install
+npm run dev:web
+```
+
+Then open http://localhost:3000.
+
+## Supabase
+
+Do not put database passwords, service-role keys, or secret keys in HTML,
+React components, Git, or any other client-side code. The publishable key is
+designed for frontend use when RLS is configured correctly.
+
+## Production safety
+
+Before public launch, add robust moderation, abuse prevention, age-appropriate
+privacy controls, livestream moderation, rate limits, audit logging, backups,
+and a tested reporting/blocking workflow. Do not expose exact locations of
+young users; public map records should remain approximate.
+
+## Legacy prototypes
+
+The `legacy/` directory contains the earlier V1 and V2 HTML prototypes that
+were created during the project.
+</pre></details><details><summary>apps/mobile/App.tsx</summary><pre>import { StatusBar } from &#x27;expo-status-bar&#x27;
+import { SafeAreaView, Text, View, StyleSheet } from &#x27;react-native&#x27;
+
+export default function App() {
+  return (
+    &lt;SafeAreaView style={styles.safe}&gt;
+      &lt;View style={styles.container}&gt;
+        &lt;Text style={styles.logo}&gt;Mirror Gram&lt;/Text&gt;
+        &lt;Text style={styles.subtitle}&gt;Create. Connect. Be discovered.&lt;/Text&gt;
+        &lt;Text style={styles.body}&gt;
+          Mobile app foundation. Connect this client to the same Supabase project
+          and share the same database and authentication model as the web app.
+        &lt;/Text&gt;
+      &lt;/View&gt;
+      &lt;StatusBar style=&quot;dark&quot; /&gt;
+    &lt;/SafeAreaView&gt;
+  )
+}
+
+const styles = StyleSheet.create({
+  safe: { flex: 1, backgroundColor: &#x27;#f7faf8&#x27; },
+  container: { flex: 1, padding: 24, justifyContent: &#x27;center&#x27; },
+  logo: { fontSize: 34, fontWeight: &#x27;800&#x27;, color: &#x27;#168a4a&#x27; },
+  subtitle: { marginTop: 8, fontSize: 18, color: &#x27;#607067&#x27; },
+  body: { marginTop: 28, lineHeight: 24, color: &#x27;#102019&#x27; }
+})
+</pre></details><details><summary>apps/mobile/app.json</summary><pre>{
+  &quot;expo&quot;: {
+    &quot;name&quot;: &quot;Mirror Gram&quot;,
+    &quot;slug&quot;: &quot;mirror-gram&quot;,
+    &quot;version&quot;: &quot;1.0.0&quot;,
+    &quot;orientation&quot;: &quot;portrait&quot;,
+    &quot;userInterfaceStyle&quot;: &quot;light&quot;,
+    &quot;plugins&quot;: [],
+    &quot;extra&quot;: {
+      &quot;supabaseUrl&quot;: &quot;https://YOUR_PROJECT_REF.supabase.co&quot;,
+      &quot;supabasePublishableKey&quot;: &quot;sb_publishable_REPLACE_ME&quot;
+    }
+  }
+}</pre></details><details><summary>apps/mobile/package.json</summary><pre>{
+  &quot;name&quot;: &quot;mirror-gram-mobile&quot;,
+  &quot;private&quot;: true,
+  &quot;scripts&quot;: {
+    &quot;start&quot;: &quot;expo start&quot;,
+    &quot;android&quot;: &quot;expo start --android&quot;,
+    &quot;ios&quot;: &quot;expo start --ios&quot;,
+    &quot;web&quot;: &quot;expo start --web&quot;
+  },
+  &quot;dependencies&quot;: {
+    &quot;@supabase/supabase-js&quot;: &quot;latest&quot;,
+    &quot;expo&quot;: &quot;latest&quot;,
+    &quot;expo-status-bar&quot;: &quot;latest&quot;,
+    &quot;react&quot;: &quot;latest&quot;,
+    &quot;react-native&quot;: &quot;latest&quot;
+  }
+}</pre></details><details><summary>apps/web/app/components/CreatePostForm.tsx</summary><pre>&#x27;use client&#x27;
+import { useState } from &#x27;react&#x27;
+import { useRouter } from &#x27;next/navigation&#x27;
+import { createClient } from &#x27;@/lib/supabase/client&#x27;
+
+export default function CreatePostForm() {
+  const supabase = createClient(); const router = useRouter()
+  const [file, setFile] = useState&lt;File | null&gt;(null); const [caption, setCaption] = useState(&#x27;&#x27;); const [visibility, setVisibility] = useState(&#x27;public&#x27;); const [busy, setBusy] = useState(false); const [preview, setPreview] = useState&lt;string | null&gt;(null)
+  function choose(f: File | undefined) { if (!f) return; if (![&#x27;image/&#x27;,&#x27;video/&#x27;].some(p =&gt; f.type.startsWith(p))) return alert(&#x27;Choose an image or video.&#x27;); if (f.size &gt; 50 * 1024 * 1024) return alert(&#x27;Maximum file size is 50 MB.&#x27;); setFile(f); setPreview(URL.createObjectURL(f)) }
+  async function publish() {
+    if (!file) return alert(&#x27;Choose a photo or video first.&#x27;); setBusy(true)
+    const { data: { user } } = await supabase.auth.getUser(); if (!user) return router.push(&#x27;/login&#x27;)
+    const ext = file.name.split(&#x27;.&#x27;).pop()?.toLowerCase() || &#x27;bin&#x27;; const postId = crypto.randomUUID(); const path = `${user.id}/${postId}/media.${ext}`
+    const upload = await supabase.storage.from(&#x27;post-media&#x27;).upload(path, file, { contentType: file.type, upsert: false })
+    if (upload.error) { setBusy(false); return alert(upload.error.message) }
+    const post = await supabase.from(&#x27;posts&#x27;).insert({ id: postId, user_id: user.id, caption: caption.trim(), visibility }).select(&#x27;id&#x27;).single()
+    if (post.error) { await supabase.storage.from(&#x27;post-media&#x27;).remove([path]); setBusy(false); return alert(post.error.message) }
+    const media = await supabase.from(&#x27;media&#x27;).insert({ post_id: postId, storage_path: path, media_type: file.type.startsWith(&#x27;video/&#x27;) ? &#x27;video&#x27; : &#x27;image&#x27;, mime_type: file.type })
+    if (media.error) { setBusy(false); return alert(media.error.message) }
+    router.push(&#x27;/&#x27;); router.refresh()
+  }
+  return &lt;section className=&quot;card form-card&quot;&gt;&lt;h2&gt;Create a post&lt;/h2&gt;&lt;p className=&quot;muted&quot;&gt;Share your work without revealing private or exact location information.&lt;/p&gt;&lt;label className=&quot;dropzone&quot;&gt;{preview ? (file?.type.startsWith(&#x27;video/&#x27;) ? &lt;video src={preview} controls /&gt; : &lt;img src={preview} alt=&quot;Preview&quot; /&gt;) : &lt;span&gt;Choose photo or video&lt;/span&gt;}&lt;input type=&quot;file&quot; accept=&quot;image/*,video/*&quot; onChange={e =&gt; choose(e.target.files?.[0])}/&gt;&lt;/label&gt;&lt;textarea value={caption} onChange={e =&gt; setCaption(e.target.value)} maxLength={2200} placeholder=&quot;Write a caption…&quot;/&gt;&lt;select value={visibility} onChange={e =&gt; setVisibility(e.target.value)}&gt;&lt;option value=&quot;public&quot;&gt;Public&lt;/option&gt;&lt;option value=&quot;followers&quot;&gt;Followers&lt;/option&gt;&lt;option value=&quot;private&quot;&gt;Only me&lt;/option&gt;&lt;/select&gt;&lt;button className=&quot;primary&quot; onClick={publish} disabled={busy}&gt;{busy ? &#x27;Publishing…&#x27; : &#x27;Publish&#x27;}&lt;/button&gt;&lt;/section&gt;
+}
+</pre></details><details><summary>apps/web/app/components/MessagesClient.tsx</summary><pre>&#x27;use client&#x27;
+import { useEffect, useState } from &#x27;react&#x27;
+import { createClient } from &#x27;@/lib/supabase/client&#x27;
+type C={id:string}; type M={id:string;conversation_id:string;sender_id:string;body:string;created_at:string}
+export default function MessagesClient({userId}:{userId:string}){const s=createClient();const [cs,setCs]=useState&lt;C[]&gt;([]);const [active,setActive]=useState&lt;string|null&gt;(null);const [ms,setMs]=useState&lt;M[]&gt;([]);const [body,setBody]=useState(&#x27;&#x27;);const [other,setOther]=useState(&#x27;&#x27;);
+useEffect(()=&gt;{load()},[]);useEffect(()=&gt;{if(!active)return;loadMessages(active);const ch=s.channel(`messages:${active}`).on(&#x27;postgres_changes&#x27;,{event:&#x27;INSERT&#x27;,schema:&#x27;public&#x27;,table:&#x27;messages&#x27;,filter:`conversation_id=eq.${active}`},payload=&gt;setMs(v=&gt;v.some(x=&gt;x.id===payload.new.id)?v:[...v,payload.new as M])).subscribe();return()=&gt;{s.removeChannel(ch)}},[active]);
+async function load(){const {data}=await s.from(&#x27;conversation_members&#x27;).select(&#x27;conversation_id&#x27;).eq(&#x27;user_id&#x27;,userId);const list=(data??[]).map(x=&gt;({id:x.conversation_id}));setCs(list);if(list[0])setActive(list[0].id)}async function loadMessages(id:string){const {data}=await s.from(&#x27;messages&#x27;).select(&#x27;*&#x27;).eq(&#x27;conversation_id&#x27;,id).order(&#x27;created_at&#x27;,{ascending:true});setMs(data??[])}async function start(){const name=other.trim().toLowerCase();if(!name)return;const {data:p}=await s.from(&#x27;profiles&#x27;).select(&#x27;id&#x27;).eq(&#x27;username&#x27;,name).single();if(!p)return alert(&#x27;User not found&#x27;);if(p.id===userId)return alert(&#x27;Choose another user.&#x27;);const {data:c,error}=await s.from(&#x27;conversations&#x27;).insert({}).select(&#x27;id&#x27;).single();if(error||!c)return alert(error?.message??&#x27;Could not create conversation&#x27;);const ins=await s.from(&#x27;conversation_members&#x27;).insert([{conversation_id:c.id,user_id:userId},{conversation_id:c.id,user_id:p.id}]);if(ins.error)return alert(ins.error.message);setCs(v=&gt;[...v,{id:c.id}]);setActive(c.id);setOther(&#x27;&#x27;)}async function send(){const text=body.trim();if(!active||!text)return;const {error}=await s.from(&#x27;messages&#x27;).insert({conversation_id:active,sender_id:userId,body:text});if(!error)setBody(&#x27;&#x27;);else alert(error.message)}
+return &lt;div className=&quot;messages-grid&quot;&gt;&lt;section className=&quot;card&quot;&gt;&lt;h3&gt;Start a chat&lt;/h3&gt;&lt;div className=&quot;inline&quot;&gt;&lt;input value={other} onChange={e=&gt;setOther(e.target.value)} placeholder=&quot;Username&quot;/&gt;&lt;button onClick={start}&gt;Start&lt;/button&gt;&lt;/div&gt;&lt;h3&gt;Conversations&lt;/h3&gt;{cs.map(c=&gt;&lt;button className={active===c.id?&#x27;conversation active&#x27;:&#x27;conversation&#x27;} key={c.id} onClick={()=&gt;setActive(c.id)}&gt;{c.id.slice(0,8)}…&lt;/button&gt;)}&lt;/section&gt;&lt;section className=&quot;card chat&quot;&gt;&lt;div className=&quot;chat-scroll&quot;&gt;{ms.map(m=&gt;&lt;div className={m.sender_id===userId?&#x27;bubble mine&#x27;:&#x27;bubble&#x27;} key={m.id}&gt;{m.body}&lt;/div&gt;)}&lt;/div&gt;&lt;div className=&quot;inline&quot;&gt;&lt;input value={body} onChange={e=&gt;setBody(e.target.value)} onKeyDown={e=&gt;{if(e.key===&#x27;Enter&#x27;)send()}} placeholder=&quot;Write a message…&quot; maxLength={5000}/&gt;&lt;button onClick={send} disabled={!active}&gt;Send&lt;/button&gt;&lt;/div&gt;&lt;/section&gt;&lt;/div&gt;}
+</pre></details><details><summary>apps/web/app/components/Nav.tsx</summary><pre>&#x27;use client&#x27;
+import Link from &#x27;next/link&#x27;
+import { usePathname } from &#x27;next/navigation&#x27;
+
+export default function Nav({ username }: { username?: string | null }) {
+  const path = usePathname()
+  const links = [[&#x27;/&#x27;, &#x27;Home&#x27;], [&#x27;/discover&#x27;, &#x27;Discover&#x27;], [&#x27;/create&#x27;, &#x27;Create&#x27;], [&#x27;/messages&#x27;, &#x27;Messages&#x27;], [&#x27;/notifications&#x27;, &#x27;Alerts&#x27;], [&#x27;/profile&#x27;, username ? `@${username}` : &#x27;Profile&#x27;]]
+  return &lt;nav className=&quot;nav&quot;&gt;{links.map(([href, label]) =&gt; &lt;Link key={href} className={path === href ? &#x27;active&#x27; : &#x27;&#x27;} href={href}&gt;{label}&lt;/Link&gt;)}&lt;/nav&gt;
+}
+</pre></details><details><summary>apps/web/app/components/PostCard.tsx</summary><pre>&#x27;use client&#x27;
+import { useState } from &#x27;react&#x27;
+import { createClient } from &#x27;@/lib/supabase/client&#x27;
+
+type Post = { id: string; user_id: string; caption: string; created_at: string; username: string; display_name: string; mediaUrl?: string | null; mediaType?: string | null; likeCount: number; commentCount: number; liked: boolean; saved: boolean }
+
+export default function PostCard({ post, canInteract = true }: { post: Post; canInteract?: boolean }) {
+  const supabase = createClient()
+  const [liked, setLiked] = useState(post.liked)
+  const [saved, setSaved] = useState(post.saved)
+  const [likes, setLikes] = useState(post.likeCount)
+  const [comment, setComment] = useState(&#x27;&#x27;)
+  const [comments, setComments] = useState(post.commentCount)
+  const [busy, setBusy] = useState(false)
+
+  async function toggleLike() {
+    if (!canInteract || busy) return
+    setBusy(true)
+    if (liked) {
+      await supabase.from(&#x27;likes&#x27;).delete().eq(&#x27;post_id&#x27;, post.id)
+      setLiked(false); setLikes(v =&gt; Math.max(0, v - 1))
+    } else {
+      const { error } = await supabase.from(&#x27;likes&#x27;).insert({ post_id: post.id, user_id: (await supabase.auth.getUser()).data.user?.id })
+      if (!error) { setLiked(true); setLikes(v =&gt; v + 1) }
+    }
+    setBusy(false)
+  }
+
+  async function toggleSave() {
+    if (!canInteract || busy) return
+    setBusy(true)
+    const uid = (await supabase.auth.getUser()).data.user?.id
+    if (!uid) return setBusy(false)
+    if (saved) { await supabase.from(&#x27;saved_posts&#x27;).delete().eq(&#x27;post_id&#x27;, post.id).eq(&#x27;user_id&#x27;, uid); setSaved(false) }
+    else { const { error } = await supabase.from(&#x27;saved_posts&#x27;).insert({ post_id: post.id, user_id: uid }); if (!error) setSaved(true) }
+    setBusy(false)
+  }
+
+  async function addComment() {
+    const body = comment.trim()
+    if (!canInteract || !body || busy) return
+    setBusy(true)
+    const uid = (await supabase.auth.getUser()).data.user?.id
+    if (uid) {
+      const { error } = await supabase.from(&#x27;comments&#x27;).insert({ post_id: post.id, user_id: uid, body })
+      if (!error) { setComment(&#x27;&#x27;); setComments(v =&gt; v + 1) }
+    }
+    setBusy(false)
+  }
+
+  async function reportPost() {
+    const uid = (await supabase.auth.getUser()).data.user?.id
+    if (!uid) return
+    const reason = window.prompt(&#x27;Reason: spam, harassment, unsafe, privacy, impersonation, copyright, or other&#x27;)
+    if (!reason) return
+    await supabase.from(&#x27;reports&#x27;).insert({ reporter_id: uid, post_id: post.id, reported_user_id: post.user_id, reason })
+    window.alert(&#x27;Thanks. Your report was submitted.&#x27;)
+  }
+
+  return &lt;article className=&quot;card post&quot;&gt;
+    &lt;div className=&quot;post-head&quot;&gt;&lt;div&gt;&lt;strong&gt;@{post.username}&lt;/strong&gt;&lt;span&gt;{post.display_name}&lt;/span&gt;&lt;/div&gt;&lt;button className=&quot;ghost&quot; onClick={reportPost}&gt;Report&lt;/button&gt;&lt;/div&gt;
+    {post.mediaUrl &amp;&amp; (post.mediaType === &#x27;video&#x27; ? &lt;video className=&quot;post-media&quot; controls playsInline src={post.mediaUrl} /&gt; : &lt;img className=&quot;post-media&quot; src={post.mediaUrl} alt=&quot;Post media&quot; /&gt;)}
+    &lt;div className=&quot;post-body&quot;&gt;&lt;p&gt;{post.caption}&lt;/p&gt;&lt;div className=&quot;actions&quot;&gt;&lt;button onClick={toggleLike} disabled={!canInteract}&gt;{liked ? &#x27;♥&#x27; : &#x27;♡&#x27;} {likes}&lt;/button&gt;&lt;button disabled&gt;{comments} comments&lt;/button&gt;&lt;button onClick={toggleSave} disabled={!canInteract}&gt;{saved ? &#x27;Saved&#x27; : &#x27;Save&#x27;}&lt;/button&gt;&lt;/div&gt;&lt;div className=&quot;comment-box&quot;&gt;&lt;input value={comment} onChange={e =&gt; setComment(e.target.value)} placeholder=&quot;Add a kind comment…&quot; maxLength={1000}/&gt;&lt;button onClick={addComment} disabled={!canInteract || !comment.trim()}&gt;Post&lt;/button&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;/article&gt;
+}
+</pre></details><details><summary>apps/web/app/create/actions.ts</summary><pre> &#x27;use server&#x27;
+
+import { revalidatePath } from &#x27;next/cache&#x27;
+import { redirect } from &#x27;next/navigation&#x27;
+import { createClient } from &#x27;@/lib/supabase/server&#x27;
+
+export async function createPost(formData: FormData) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect(&#x27;/login&#x27;)
+
+  const caption = String(formData.get(&#x27;caption&#x27;) || &#x27;&#x27;).trim()
+  const visibility = String(formData.get(&#x27;visibility&#x27;) || &#x27;public&#x27;)
+
+  const { error } = await supabase.from(&#x27;posts&#x27;).insert({
+    user_id: user.id,
+    caption,
+    visibility
+  })
+
+  if (error) redirect(`/create?error=${encodeURIComponent(error.message)}`)
+
+  revalidatePath(&#x27;/&#x27;)
+  redirect(&#x27;/&#x27;)
+}
+</pre></details><details><summary>apps/web/app/create/page.tsx</summary><pre>import { redirect } from &#x27;next/navigation&#x27;
+import { createClient } from &#x27;@/lib/supabase/server&#x27;
+import Nav from &#x27;../components/Nav&#x27;
+import CreatePostForm from &#x27;../components/CreatePostForm&#x27;
+export default async function CreatePage() { const supabase=await createClient(); const {data:{user}}=await supabase.auth.getUser(); if(!user) redirect(&#x27;/login&#x27;); const {data:p}=await supabase.from(&#x27;profiles&#x27;).select(&#x27;username&#x27;).eq(&#x27;id&#x27;,user.id).single(); return &lt;main className=&quot;shell&quot;&gt;&lt;header className=&quot;topbar&quot;&gt;&lt;div&gt;&lt;h1&gt;Mirror Gram&lt;/h1&gt;&lt;p&gt;Create&lt;/p&gt;&lt;/div&gt;&lt;Nav username={p?.username}/&gt;&lt;/header&gt;&lt;CreatePostForm/&gt;&lt;/main&gt; }
+</pre></details><details><summary>apps/web/app/discover/page.tsx</summary><pre>import Link from &#x27;next/link&#x27;
+import { createClient } from &#x27;@/lib/supabase/server&#x27;
+import Nav from &#x27;../components/Nav&#x27;
+export const dynamic=&#x27;force-dynamic&#x27;
+export default async function DiscoverPage(){const s=await createClient();const {data:{user}}=await s.auth.getUser();if(!user)return &lt;main className=&quot;shell&quot;&gt;&lt;Link href=&quot;/login&quot;&gt;Sign in&lt;/Link&gt;&lt;/main&gt;;const [{data:me},{data:profiles}]=await Promise.all([s.from(&#x27;profiles&#x27;).select(&#x27;username&#x27;).eq(&#x27;id&#x27;,user.id).single(),s.from(&#x27;profiles&#x27;).select(&#x27;id,username,display_name,bio,creator_status&#x27;).neq(&#x27;id&#x27;,user.id).order(&#x27;created_at&#x27;,{ascending:false}).limit(50)]);return &lt;main className=&quot;shell&quot;&gt;&lt;header className=&quot;topbar&quot;&gt;&lt;div&gt;&lt;h1&gt;Discover&lt;/h1&gt;&lt;p&gt;Find creators and new ideas.&lt;/p&gt;&lt;/div&gt;&lt;Nav username={me?.username}/&gt;&lt;/header&gt;&lt;div className=&quot;grid&quot;&gt;{(profiles??[]).map(p=&gt;&lt;article className=&quot;card creator&quot; key={p.id}&gt;&lt;strong&gt;@{p.username}&lt;/strong&gt;&lt;h3&gt;{p.display_name}&lt;/h3&gt;&lt;span className=&quot;badge&quot;&gt;{p.creator_status}&lt;/span&gt;&lt;p&gt;{p.bio}&lt;/p&gt;&lt;Link href={`/profile/${p.id}`}&gt;View profile →&lt;/Link&gt;&lt;/article&gt;)}&lt;/div&gt;&lt;/main&gt;}
+</pre></details><details><summary>apps/web/app/error/page.tsx</summary><pre>export default async function ErrorPage({ searchParams }: { searchParams: Promise&lt;{ message?: string }&gt; }) {
+  const params = await searchParams
+  return (
+    &lt;main style={{ maxWidth: 600, margin: &#x27;60px auto&#x27;, padding: 24 }}&gt;
+      &lt;h1&gt;Something went wrong&lt;/h1&gt;
+      &lt;p&gt;{params.message ?? &#x27;Please try again.&#x27;}&lt;/p&gt;
+    &lt;/main&gt;
+  )
+}
+</pre></details><details><summary>apps/web/app/globals.css</summary><pre>:root{--green:#168a4a;--dark:#0d5f35;--soft:#eaf8f0;--text:#102019;--muted:#607067;--line:#dfe9e3;--bg:#f6faf7;--white:#fff}*{box-sizing:border-box}html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Arial,sans-serif}a{color:var(--green);text-decoration:none}button,input,textarea,select{font:inherit}button{cursor:pointer}.shell{max-width:1180px;margin:0 auto;padding:24px}.narrow{max-width:760px}.topbar,.hero{display:flex;justify-content:space-between;gap:20px;align-items:center;margin-bottom:24px}.topbar h1,.hero h1{color:var(--green);margin:0}.topbar p,.hero p,.muted{color:var(--muted)}.nav{display:flex;gap:8px;flex-wrap:wrap}.nav a{padding:9px 11px;border-radius:10px}.nav a.active,.nav a:hover{background:var(--soft)}.card{background:var(--white);border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 6px 24px rgba(20,70,40,.04)}.hero-card{padding:30px}.link-button{display:inline-block}.primary{background:var(--green);color:#fff;border:0;border-radius:11px;padding:11px 15px}.section-title{display:flex;justify-content:space-between;align-items:center}.feed-layout{display:grid;grid-template-columns:minmax(0,720px) 300px;gap:22px}.side{position:sticky;top:18px;height:max-content}.post{padding:0;overflow:hidden;margin-bottom:18px}.post-head{display:flex;justify-content:space-between;padding:15px 16px}.post-head span{display:block;color:var(--muted);font-size:13px}.ghost{border:0;background:transparent;color:var(--muted)}.post-media{display:block;width:100%;max-height:620px;object-fit:cover;background:#edf4ef}.post-body{padding:15px 16px}.actions{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0}.actions button,.comment-box button,.inline button,.conversation{border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 11px}.comment-box,.inline{display:flex;gap:8px}.comment-box input,.inline input,.form-card textarea,.form-card select{width:100%;border:1px solid var(--line);border-radius:10px;padding:11px;background:#fff}.form-card{max-width:720px;margin:0 auto;display:grid;gap:12px}.dropzone{border:2px dashed var(--line);border-radius:14px;min-height:280px;display:grid;place-items:center;overflow:hidden;background:var(--soft)}.dropzone input{display:none}.dropzone img,.dropzone video{width:100%;max-height:500px;object-fit:contain}.chips{display:flex;gap:8px;flex-wrap:wrap}.chips span,.badge{background:var(--soft);color:var(--dark);padding:6px 9px;border-radius:999px;font-size:12px}.empty{text-align:center}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}.creator p{color:var(--muted);min-height:42px}.profile{margin:20px 0}.list{display:grid;gap:4px}.item{display:grid;grid-template-columns:100px 1fr auto;gap:10px;padding:13px;border-radius:10px}.item.unread{background:var(--soft)}.messages-grid{display:grid;grid-template-columns:280px 1fr;gap:16px}.messages-grid section{min-height:500px}.conversation{display:block;width:100%;text-align:left;margin:5px 0}.conversation.active{background:var(--soft)}.chat{display:flex;flex-direction:column;justify-content:space-between}.chat-scroll{display:flex;flex-direction:column;gap:8px;overflow:auto;min-height:420px;max-height:620px}.bubble{max-width:75%;padding:10px 12px;background:#eef4ef;border-radius:14px 14px 14px 4px}.bubble.mine{align-self:flex-end;background:var(--soft);border-radius:14px 14px 4px 14px}@media(max-width:800px){.feed-layout,.messages-grid{grid-template-columns:1fr}.side{position:static}.topbar,.hero{align-items:flex-start;flex-direction:column}.item{grid-template-columns:1fr}.shell{padding:15px}}
+</pre></details><details><summary>apps/web/app/layout.tsx</summary><pre>import &#x27;./globals.css&#x27;
+import type { Metadata } from &#x27;next&#x27;
+
+export const metadata: Metadata = {
+  title: &#x27;Mirror Gram&#x27;,
+  description: &#x27;Create. Connect. Be discovered.&#x27;,
+}
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return &lt;html lang=&quot;en&quot;&gt;&lt;body&gt;{children}&lt;/body&gt;&lt;/html&gt;
+}
+</pre></details><details><summary>apps/web/app/login/actions.ts</summary><pre> &#x27;use server&#x27;
+
+import { revalidatePath } from &#x27;next/cache&#x27;
+import { redirect } from &#x27;next/navigation&#x27;
+import { createClient } from &#x27;@/lib/supabase/server&#x27;
+
+export async function login(formData: FormData) {
+  const supabase = await createClient()
+  const email = String(formData.get(&#x27;email&#x27;) || &#x27;&#x27;)
+  const password = String(formData.get(&#x27;password&#x27;) || &#x27;&#x27;)
+
+  const { error } = await supabase.auth.signInWithPassword({ email, password })
+  if (error) redirect(`/login?error=${encodeURIComponent(error.message)}`)
+
+  revalidatePath(&#x27;/&#x27;, &#x27;layout&#x27;)
+  redirect(&#x27;/&#x27;)
+}
+
+export async function signup(formData: FormData) {
+  const supabase = await createClient()
+  const email = String(formData.get(&#x27;email&#x27;) || &#x27;&#x27;)
+  const password = String(formData.get(&#x27;password&#x27;) || &#x27;&#x27;)
+  const username = String(formData.get(&#x27;username&#x27;) || &#x27;&#x27;).trim().toLowerCase()
+
+  if (!/^[a-z0-9_]{3,30}$/.test(username)) {
+    redirect(&#x27;/login?error=Choose a username using 3-30 letters, numbers, or underscores.&#x27;)
+  }
+
+  const { error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: { data: { username, display_name: username } }
+  })
+
+  if (error) redirect(`/login?error=${encodeURIComponent(error.message)}`)
+  redirect(&#x27;/login?message=Check your email to confirm your account.&#x27;)
+}
+</pre></details><details><summary>apps/web/app/login/page.tsx</summary><pre>import { login, signup } from &#x27;./actions&#x27;
+
+export default function LoginPage() {
+  return (
+    &lt;main style={{ maxWidth: 520, margin: &#x27;60px auto&#x27;, padding: 24 }}&gt;
+      &lt;h1 style={{ color: &#x27;#168a4a&#x27; }}&gt;Mirror Gram&lt;/h1&gt;
+      &lt;p&gt;Sign in or create your account.&lt;/p&gt;
+      &lt;form action={login} style={{ display: &#x27;grid&#x27;, gap: 12 }}&gt;
+        &lt;input name=&quot;email&quot; type=&quot;email&quot; placeholder=&quot;Email&quot; required style={{ padding: 12, border: &#x27;1px solid #dfe9e3&#x27;, borderRadius: 10 }} /&gt;
+        &lt;input name=&quot;password&quot; type=&quot;password&quot; placeholder=&quot;Password&quot; required minLength={8} style={{ padding: 12, border: &#x27;1px solid #dfe9e3&#x27;, borderRadius: 10 }} /&gt;
+        &lt;input name=&quot;username&quot; placeholder=&quot;Username (for sign-up)&quot; minLength={3} maxLength={30} style={{ padding: 12, border: &#x27;1px solid #dfe9e3&#x27;, borderRadius: 10 }} /&gt;
+        &lt;div style={{ display: &#x27;flex&#x27;, gap: 10 }}&gt;
+          &lt;button type=&quot;submit&quot; style={{ padding: 12, border: 0, borderRadius: 10, background: &#x27;#168a4a&#x27;, color: &#x27;#fff&#x27; }}&gt;Sign in&lt;/button&gt;
+          &lt;button formAction={signup} type=&quot;submit&quot; style={{ padding: 12, border: &#x27;1px solid #168a4a&#x27;, borderRadius: 10, background: &#x27;#fff&#x27;, color: &#x27;#168a4a&#x27; }}&gt;Create account&lt;/button&gt;
+        &lt;/div&gt;
+      &lt;/form&gt;
+      &lt;p style={{ color: &#x27;#607067&#x27;, fontSize: 14 }}&gt;Email confirmation may be required by your Supabase Auth settings.&lt;/p&gt;
+    &lt;/main&gt;
+  )
+}
+</pre></details><details><summary>apps/web/app/messages/page.tsx</summary><pre>import { redirect } from &#x27;next/navigation&#x27;
+import { createClient } from &#x27;@/lib/supabase/server&#x27;
+import Nav from &#x27;../components/Nav&#x27;
+import MessagesClient from &#x27;../components/MessagesClient&#x27;
+export default async function MessagesPage(){const supabase=await createClient();const {data:{user}}=await supabase.auth.getUser();if(!user)redirect(&#x27;/login&#x27;);const {data:p}=await supabase.from(&#x27;profiles&#x27;).select(&#x27;username&#x27;).eq(&#x27;id&#x27;,user.id).single();return &lt;main className=&quot;shell&quot;&gt;&lt;header className=&quot;topbar&quot;&gt;&lt;div&gt;&lt;h1&gt;Messages&lt;/h1&gt;&lt;p&gt;Private conversations with people you choose to contact.&lt;/p&gt;&lt;/div&gt;&lt;Nav username={p?.username}/&gt;&lt;/header&gt;&lt;MessagesClient userId={user.id}/&gt;&lt;/main&gt;}
+</pre></details><details><summary>apps/web/app/notifications/page.tsx</summary><pre>import { redirect } from &#x27;next/navigation&#x27;
+import { createClient } from &#x27;@/lib/supabase/server&#x27;
+import Nav from &#x27;../components/Nav&#x27;
+export const dynamic=&#x27;force-dynamic&#x27;
+export default async function NotificationsPage(){const supabase=await createClient();const {data:{user}}=await supabase.auth.getUser();if(!user)redirect(&#x27;/login&#x27;);const [{data:p},{data:n}]=await Promise.all([supabase.from(&#x27;profiles&#x27;).select(&#x27;username&#x27;).eq(&#x27;id&#x27;,user.id).single(),supabase.from(&#x27;notifications&#x27;).select(&#x27;id,type,message,created_at,read_at&#x27;).eq(&#x27;user_id&#x27;,user.id).order(&#x27;created_at&#x27;,{ascending:false}).limit(50)]);return &lt;main className=&quot;shell&quot;&gt;&lt;header className=&quot;topbar&quot;&gt;&lt;div&gt;&lt;h1&gt;Alerts&lt;/h1&gt;&lt;p&gt;Your activity and messages.&lt;/p&gt;&lt;/div&gt;&lt;Nav username={p?.username}/&gt;&lt;/header&gt;&lt;section className=&quot;card list&quot;&gt;{(n??[]).length?(n??[]).map(x=&gt;&lt;div className={x.read_at?&#x27;item&#x27;:&#x27;item unread&#x27;} key={x.id}&gt;&lt;strong&gt;{x.type}&lt;/strong&gt;&lt;span&gt;{x.message}&lt;/span&gt;&lt;small&gt;{new Date(x.created_at).toLocaleString()}&lt;/small&gt;&lt;/div&gt;):&lt;p className=&quot;muted&quot;&gt;No notifications yet.&lt;/p&gt;}&lt;/section&gt;&lt;/main&gt;}
+</pre></details><details><summary>apps/web/app/page.tsx</summary><pre>import Link from &#x27;next/link&#x27;
+import { createClient } from &#x27;@/lib/supabase/server&#x27;
+import Nav from &#x27;./components/Nav&#x27;
+import PostCard from &#x27;./components/PostCard&#x27;
+
+export const dynamic = &#x27;force-dynamic&#x27;
+
+export default async function HomePage() {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return &lt;main className=&quot;shell&quot;&gt;&lt;header className=&quot;hero&quot;&gt;&lt;div&gt;&lt;h1&gt;Mirror Gram&lt;/h1&gt;&lt;p&gt;Create. Connect. Be discovered.&lt;/p&gt;&lt;/div&gt;&lt;Link className=&quot;primary link-button&quot; href=&quot;/login&quot;&gt;Get started&lt;/Link&gt;&lt;/header&gt;&lt;section className=&quot;card hero-card&quot;&gt;&lt;h2&gt;A safer creator-first social space.&lt;/h2&gt;&lt;p&gt;Post photos and videos, discover creators, message people you follow, and build your creator journey.&lt;/p&gt;&lt;div className=&quot;chips&quot;&gt;&lt;span&gt;Green + white&lt;/span&gt;&lt;span&gt;Creator tools&lt;/span&gt;&lt;span&gt;Privacy controls&lt;/span&gt;&lt;span&gt;Reporting&lt;/span&gt;&lt;/div&gt;&lt;/section&gt;&lt;/main&gt;
+  const { data: profile } = await supabase.from(&#x27;profiles&#x27;).select(&#x27;username&#x27;).eq(&#x27;id&#x27;, user.id).single()
+  const { data: posts } = await supabase.from(&#x27;posts&#x27;).select(&#x27;id,user_id,caption,created_at,profiles(username,display_name),media(id,storage_path,media_type)&#x27;).order(&#x27;created_at&#x27;, { ascending: false }).limit(20)
+  const postIds = (posts ?? []).map(p =&gt; p.id)
+  const [{ data: likes }, { data: comments }, { data: saved }] = await Promise.all([
+    postIds.length ? supabase.from(&#x27;likes&#x27;).select(&#x27;post_id,user_id&#x27;).in(&#x27;post_id&#x27;, postIds) : Promise.resolve({ data: [] as any[] }),
+    postIds.length ? supabase.from(&#x27;comments&#x27;).select(&#x27;post_id&#x27;).in(&#x27;post_id&#x27;, postIds) : Promise.resolve({ data: [] as any[] }),
+    postIds.length ? supabase.from(&#x27;saved_posts&#x27;).select(&#x27;post_id&#x27;).eq(&#x27;user_id&#x27;, user.id).in(&#x27;post_id&#x27;, postIds) : Promise.resolve({ data: [] as any[] }),
+  ])
+  const viewPosts = await Promise.all((posts ?? []).map(async p =&gt; { const m = p.media?.[0]; let url = null; if (m) url = (await supabase.storage.from(&#x27;post-media&#x27;).createSignedUrl(m.storage_path, 3600)).data?.signedUrl ?? null; return { id:p.id,user_id:p.user_id,caption:p.caption,created_at:p.created_at,username:(p.profiles as any)?.username ?? &#x27;user&#x27;,display_name:(p.profiles as any)?.display_name ?? &#x27;&#x27;,mediaUrl:url,mediaType:m?.media_type ?? null,likeCount:(likes ?? []).filter(x=&gt;x.post_id===p.id).length,commentCount:(comments ?? []).filter(x=&gt;x.post_id===p.id).length,liked:(likes ?? []).some(x=&gt;x.post_id===p.id&amp;&amp;x.user_id===user.id),saved:(saved ?? []).some(x=&gt;x.post_id===p.id)} }))
+  return &lt;main className=&quot;shell&quot;&gt;&lt;header className=&quot;topbar&quot;&gt;&lt;div&gt;&lt;h1&gt;Mirror Gram&lt;/h1&gt;&lt;p&gt;Create. Connect. Be discovered.&lt;/p&gt;&lt;/div&gt;&lt;Nav username={profile?.username}/&gt;&lt;/header&gt;&lt;div className=&quot;feed-layout&quot;&gt;&lt;section&gt;&lt;div className=&quot;section-title&quot;&gt;&lt;h2&gt;Your feed&lt;/h2&gt;&lt;Link href=&quot;/create&quot;&gt;+ Create&lt;/Link&gt;&lt;/div&gt;{viewPosts.length ? viewPosts.map(p =&gt; &lt;PostCard key={p.id} post={p}/&gt;) : &lt;div className=&quot;card empty&quot;&gt;&lt;h3&gt;No posts yet&lt;/h3&gt;&lt;p&gt;Follow creators or publish your first post.&lt;/p&gt;&lt;Link className=&quot;primary link-button&quot; href=&quot;/create&quot;&gt;Create your first post&lt;/Link&gt;&lt;/div&gt;}&lt;/section&gt;&lt;aside className=&quot;card side&quot;&gt;&lt;strong&gt;V3.1&lt;/strong&gt;&lt;h3&gt;Creator safety first&lt;/h3&gt;&lt;p&gt;Keep exact addresses and private locations out of posts. Use the report and block controls when something feels unsafe.&lt;/p&gt;&lt;Link href=&quot;/safety&quot;&gt;Safety Center →&lt;/Link&gt;&lt;/aside&gt;&lt;/div&gt;&lt;/main&gt;
+}
+</pre></details><details><summary>apps/web/app/profile/[id]/page.tsx</summary><pre>import { notFound } from &#x27;next/navigation&#x27;
+import Link from &#x27;next/link&#x27;
+import { createClient } from &#x27;@/lib/supabase/server&#x27;
+import PostCard from &#x27;../../components/PostCard&#x27;
+export const dynamic=&#x27;force-dynamic&#x27;
+export default async function PublicProfile({params}:{params:Promise&lt;{id:string}&gt;}){const {id}=await params;const s=await createClient();const {data:{user}}=await s.auth.getUser();if(!user)notFound();const {data:p}=await s.from(&#x27;profiles&#x27;).select(&#x27;*&#x27;).eq(&#x27;id&#x27;,id).single();if(!p)notFound();const {data:posts}=await s.from(&#x27;posts&#x27;).select(&#x27;id,user_id,caption,created_at,profiles(username,display_name),media(id,storage_path,media_type)&#x27;).eq(&#x27;user_id&#x27;,id).order(&#x27;created_at&#x27;,{ascending:false}).limit(20);const ids=(posts??[]).map(x=&gt;x.id);const {data:likes}=ids.length?await s.from(&#x27;likes&#x27;).select(&#x27;post_id,user_id&#x27;).in(&#x27;post_id&#x27;,ids):{data:[] as any[]};const view=await Promise.all((posts??[]).map(async x=&gt;{const m=x.media?.[0];const url=m?(await s.storage.from(&#x27;post-media&#x27;).createSignedUrl(m.storage_path,3600)).data?.signedUrl:null;return{id:x.id,user_id:x.user_id,caption:x.caption,created_at:x.created_at,username:p.username,display_name:p.display_name,mediaUrl:url,mediaType:m?.media_type??null,likeCount:(likes??[]).filter(l=&gt;l.post_id===x.id).length,commentCount:0,liked:(likes??[]).some(l=&gt;l.post_id===x.id&amp;&amp;l.user_id===user.id),saved:false}}));return &lt;main className=&quot;shell narrow&quot;&gt;&lt;Link href=&quot;/discover&quot;&gt;← Discover&lt;/Link&gt;&lt;section className=&quot;card profile&quot;&gt;&lt;h1&gt;@{p.username}&lt;/h1&gt;&lt;h2&gt;{p.display_name}&lt;/h2&gt;&lt;span className=&quot;badge&quot;&gt;{p.creator_status}&lt;/span&gt;&lt;p&gt;{p.bio}&lt;/p&gt;&lt;/section&gt;{view.map(x=&gt;&lt;PostCard key={x.id} post={x}/&gt;)}&lt;/main&gt;}
+</pre></details><details><summary>apps/web/app/profile/actions.ts</summary><pre> &#x27;use server&#x27;
+
+import { revalidatePath } from &#x27;next/cache&#x27;
+import { redirect } from &#x27;next/navigation&#x27;
+import { createClient } from &#x27;@/lib/supabase/server&#x27;
+
+export async function updateProfile(formData: FormData) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect(&#x27;/login&#x27;)
+
+  const username = String(formData.get(&#x27;username&#x27;) || &#x27;&#x27;).trim().toLowerCase()
+  const display_name = String(formData.get(&#x27;display_name&#x27;) || &#x27;&#x27;).trim()
+  const bio = String(formData.get(&#x27;bio&#x27;) || &#x27;&#x27;).trim()
+  const is_private = formData.get(&#x27;is_private&#x27;) === &#x27;on&#x27;
+
+  if (!/^[a-z0-9_]{3,30}$/.test(username)) {
+    redirect(&#x27;/profile?error=Invalid username&#x27;)
+  }
+
+  const { error } = await supabase.from(&#x27;profiles&#x27;).update({
+    username, display_name, bio, is_private
+  }).eq(&#x27;id&#x27;, user.id)
+
+  if (error) redirect(`/profile?error=${encodeURIComponent(error.message)}`)
+  revalidatePath(&#x27;/profile&#x27;)
+  redirect(&#x27;/profile?saved=1&#x27;)
+}
+</pre></details><details><summary>apps/web/app/profile/page.tsx</summary><pre>import { createClient } from &#x27;@/lib/supabase/server&#x27;
+import { redirect } from &#x27;next/navigation&#x27;
+import { updateProfile } from &#x27;./actions&#x27;
+
+export default async function ProfilePage() {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect(&#x27;/login&#x27;)
+
+  const { data: profile } = await supabase.from(&#x27;profiles&#x27;).select(&#x27;*&#x27;).eq(&#x27;id&#x27;, user.id).single()
+
+  return (
+    &lt;main style={{ maxWidth: 700, margin: &#x27;40px auto&#x27;, padding: 24 }}&gt;
+      &lt;h1 style={{ color: &#x27;#168a4a&#x27; }}&gt;Your profile&lt;/h1&gt;
+      &lt;form action={updateProfile} style={{ display: &#x27;grid&#x27;, gap: 12 }}&gt;
+        &lt;input name=&quot;username&quot; defaultValue={profile?.username ?? &#x27;&#x27;} minLength={3} maxLength={30} required /&gt;
+        &lt;input name=&quot;display_name&quot; defaultValue={profile?.display_name ?? &#x27;&#x27;} maxLength={80} /&gt;
+        &lt;textarea name=&quot;bio&quot; defaultValue={profile?.bio ?? &#x27;&#x27;} maxLength={500} rows={5} /&gt;
+        &lt;label&gt;&lt;input type=&quot;checkbox&quot; name=&quot;is_private&quot; defaultChecked={profile?.is_private ?? false} /&gt; Private profile&lt;/label&gt;
+        &lt;button type=&quot;submit&quot; style={{ background: &#x27;#168a4a&#x27;, color: &#x27;#fff&#x27;, border: 0, borderRadius: 10, padding: 12 }}&gt;Save profile&lt;/button&gt;
+      &lt;/form&gt;
+    &lt;/main&gt;
+  )
+}
+</pre></details><details><summary>apps/web/app/safety/page.tsx</summary><pre>import Link from &#x27;next/link&#x27;
+export default function Safety(){return &lt;main className=&quot;shell narrow&quot;&gt;&lt;Link href=&quot;/&quot;&gt;← Home&lt;/Link&gt;&lt;section className=&quot;card hero-card&quot;&gt;&lt;h1&gt;Safety Center&lt;/h1&gt;&lt;p&gt;Mirror Gram is designed to support creators while protecting privacy and personal boundaries.&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Do not post your exact home, school, or private address.&lt;/li&gt;&lt;li&gt;Use approximate areas for public events rather than exact locations.&lt;/li&gt;&lt;li&gt;Block accounts that bother you and report content that breaks the rules.&lt;/li&gt;&lt;li&gt;For livestreaming, use strong moderation and privacy controls before going live.&lt;/li&gt;&lt;li&gt;If something feels unsafe, tell a trusted adult or appropriate local authority.&lt;/li&gt;&lt;/ul&gt;&lt;/section&gt;&lt;/main&gt;}
+</pre></details><details><summary>apps/web/lib/supabase/client.ts</summary><pre>import { createBrowserClient } from &#x27;@supabase/ssr&#x27;
+import type { Database } from &#x27;./database.types&#x27;
+
+export function createClient() {
+  return createBrowserClient&lt;Database&gt;(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!
+  )
+}
+</pre></details><details><summary>apps/web/lib/supabase/database.types.ts</summary><pre>// Generated from the connected Mirror Gram Supabase project.
+// Regenerate with the Supabase type generator whenever the schema changes.
+
+export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[]
+
+export type Database = {
+  public: {
+    Tables: {
+      profiles: {
+        Row: { id: string; username: string; display_name: string; bio: string; avatar_path: string | null; creator_status: string; is_private: boolean; created_at: string; updated_at: string }
+        Insert: { id: string; username: string; display_name?: string; bio?: string; avatar_path?: string | null; creator_status?: string; is_private?: boolean; created_at?: string; updated_at?: string }
+        Update: { id?: string; username?: string; display_name?: string; bio?: string; avatar_path?: string | null; creator_status?: string; is_private?: boolean; created_at?: string; updated_at?: string }
+        Relationships: []
+      }
+      posts: {
+        Row: { id: string; user_id: string; caption: string; visibility: string; created_at: string; updated_at: string }
+        Insert: { id?: string; user_id: string; caption?: string; visibility?: string; created_at?: string; updated_at?: string }
+        Update: { id?: string; user_id?: string; caption?: string; visibility?: string; created_at?: string; updated_at?: string }
+        Relationships: [{ foreignKeyName: &quot;posts_user_id_fkey&quot;; columns: [&quot;user_id&quot;]; isOneToOne: false; referencedRelation: &quot;profiles&quot;; referencedColumns: [&quot;id&quot;] }]
+      }
+      media: {
+        Row: { id: string; post_id: string; storage_path: string; media_type: string; mime_type: string | null; width: number | null; height: number | null; duration_seconds: number | null; created_at: string }
+        Insert: { id?: string; post_id: string; storage_path: string; media_type: string; mime_type?: string | null; width?: number | null; height?: number | null; duration_seconds?: number | null; created_at?: string }
+        Update: { id?: string; post_id?: string; storage_path?: string; media_type?: string; mime_type?: string | null; width?: number | null; height?: number | null; duration_seconds?: number | null; created_at?: string }
+        Relationships: [{ foreignKeyName: &quot;media_post_id_fkey&quot;; columns: [&quot;post_id&quot;]; isOneToOne: false; referencedRelation: &quot;posts&quot;; referencedColumns: [&quot;id&quot;] }]
+      }
+      follows: {
+        Row: { follower_id: string; following_id: string; created_at: string }
+        Insert: { follower_id: string; following_id: string; created_at?: string }
+        Update: { follower_id?: string; following_id?: string; created_at?: string }
+        Relationships: []
+      }
+      likes: {
+        Row: { user_id: string; post_id: string; created_at: string }
+        Insert: { user_id: string; post_id: string; created_at?: string }
+        Update: { user_id?: string; post_id?: string; created_at?: string }
+        Relationships: []
+      }
+      comments: {
+        Row: { id: string; post_id: string; user_id: string; body: string; created_at: string; updated_at: string }
+        Insert: { id?: string; post_id: string; user_id: string; body: string; created_at?: string; updated_at?: string }
+        Update: { id?: string; post_id?: string; user_id?: string; body?: string; created_at?: string; updated_at?: string }
+        Relationships: []
+      }
+      saved_posts: {
+        Row: { user_id: string; post_id: string; created_at: string }
+        Insert: { user_id: string; post_id: string; created_at?: string }
+        Update: { user_id?: string; post_id?: string; created_at?: string }
+        Relationships: []
+      }
+      blocks: {
+        Row: { blocker_id: string; blocked_id: string; created_at: string }
+        Insert: { blocker_id: string; blocked_id: string; created_at?: string }
+        Update: { blocker_id?: string; blocked_id?: string; created_at?: string }
+        Relationships: []
+      }
+      conversations: {
+        Row: { id: string; created_at: string }
+        Insert: { id?: string; created_at?: string }
+        Update: { id?: string; created_at?: string }
+        Relationships: []
+      }
+      conversation_members: {
+        Row: { conversation_id: string; user_id: string; joined_at: string }
+        Insert: { conversation_id: string; user_id: string; joined_at?: string }
+        Update: { conversation_id?: string; user_id?: string; joined_at?: string }
+        Relationships: []
+      }
+      messages: {
+        Row: { id: string; conversation_id: string; sender_id: string; body: string; created_at: string; deleted_at: string | null }
+        Insert: { id?: string; conversation_id: string; sender_id: string; body: string; created_at?: string; deleted_at?: string | null }
+        Update: { id?: string; conversation_id?: string; sender_id?: string; body?: string; created_at?: string; deleted_at?: string | null }
+        Relationships: []
+      }
+      notifications: {
+        Row: { id: string; user_id: string; actor_id: string | null; type: string; post_id: string | null; message: string | null; read_at: string | null; created_at: string }
+        Insert: { id?: string; user_id: string; actor_id?: string | null; type: string; post_id?: string | null; message?: string | null; read_at?: string | null; created_at?: string }
+        Update: { id?: string; user_id?: string; actor_id?: string | null; type?: string; post_id?: string | null; message?: string | null; read_at?: string | null; created_at?: string }
+        Relationships: []
+      }
+      reports: {
+        Row: { id: string; reporter_id: string; reported_user_id: string | null; post_id: string | null; message_id: string | null; reason: string; details: string | null; status: string; created_at: string }
+        Insert: { id?: string; reporter_id: string; reported_user_id?: string | null; post_id?: string | null; message_id?: string | null; reason: string; details?: string | null; status?: string; created_at?: string }
+        Update: { id?: string; reporter_id?: string; reported_user_id?: string | null; post_id?: string | null; message_id?: string | null; reason?: string; details?: string | null; status?: string; created_at?: string }
+        Relationships: []
+      }
+      live_streams: {
+        Row: { id: string; host_user_id: string; title: string; category: string; status: string; started_at: string | null; ended_at: string | null; created_at: string }
+        Insert: { id?: string; host_user_id: string; title?: string; category?: string; status?: string; started_at?: string | null; ended_at?: string | null; created_at?: string }
+        Update: { id?: string; host_user_id?: string; title?: string; category?: string; status?: string; started_at?: string | null; ended_at?: string | null; created_at?: string }
+        Relationships: []
+      }
+      public_events: {
+        Row: { id: string; creator_id: string; title: string; description: string; area_name: string; approximate_lat: number | null; approximate_lng: number | null; starts_at: string | null; ends_at: string | null; created_at: string }
+        Insert: { id?: string; creator_id: string; title: string; description?: string; area_name?: string; approximate_lat?: number | null; approximate_lng?: number | null; starts_at?: string | null; ends_at?: string | null; created_at?: string }
+        Update: { id?: string; creator_id?: string; title?: string; description?: string; area_name?: string; approximate_lat?: number | null; approximate_lng?: number | null; starts_at?: string | null; ends_at?: string | null; created_at?: string }
+        Relationships: []
+      }
+    }
+    Views: Record&lt;string, never&gt;
+    Functions: {
+      is_blocked: { Args: { viewer: string; other_user: string }; Returns: boolean }
+    }
+    Enums: Record&lt;string, never&gt;
+    CompositeTypes: Record&lt;string, never&gt;
+  }
+}
+</pre></details><details><summary>apps/web/lib/supabase/proxy.ts</summary><pre>import { createServerClient } from &#x27;@supabase/ssr&#x27;
+import { NextResponse, type NextRequest } from &#x27;next/server&#x27;
+
+export async function updateSession(request: NextRequest) {
+  let response = NextResponse.next({ request })
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
+    {
+      cookies: {
+        getAll: () =&gt; request.cookies.getAll(),
+        setAll(cookiesToSet, headers) {
+          cookiesToSet.forEach(({ name, value }) =&gt; request.cookies.set(name, value))
+          response = NextResponse.next({ request })
+          cookiesToSet.forEach(({ name, value, options }) =&gt; response.cookies.set(name, value, options))
+          Object.entries(headers).forEach(([key, value]) =&gt; response.headers.set(key, value))
+        },
+      },
+    }
+  )
+  await supabase.auth.getClaims()
+  return response
+}
+</pre></details><details><summary>apps/web/lib/supabase/server.ts</summary><pre>import { createServerClient } from &#x27;@supabase/ssr&#x27;
+import { cookies } from &#x27;next/headers&#x27;
+import type { Database } from &#x27;./database.types&#x27;
+
+export async function createClient() {
+  const cookieStore = await cookies()
+
+  return createServerClient&lt;Database&gt;(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return cookieStore.getAll()
+        },
+        setAll(cookiesToSet) {
+          try {
+            cookiesToSet.forEach(({ name, value, options }) =&gt;
+              cookieStore.set(name, value, options)
+            )
+          } catch {
+            // Server Components may not be allowed to set cookies.
+          }
+        },
+      },
+    }
+  )
+}
+</pre></details><details><summary>apps/web/next-env.d.ts</summary><pre>/// &lt;reference types=&quot;next&quot; /&gt;
+/// &lt;reference types=&quot;next/image-types/global&quot; /&gt;
+
+// NOTE: This file should not be edited
+// see https://nextjs.org/docs/app/api-reference/config/typescript for more information.
+</pre></details><details><summary>apps/web/package.json</summary><pre>{
+  &quot;name&quot;: &quot;mirror-gram-web&quot;,
+  &quot;private&quot;: true,
+  &quot;scripts&quot;: {
+    &quot;dev&quot;: &quot;next dev&quot;,
+    &quot;build&quot;: &quot;next build&quot;,
+    &quot;start&quot;: &quot;next start&quot;,
+    &quot;typecheck&quot;: &quot;tsc --noEmit&quot;
+  },
+  &quot;dependencies&quot;: {
+    &quot;@supabase/ssr&quot;: &quot;latest&quot;,
+    &quot;@supabase/supabase-js&quot;: &quot;latest&quot;,
+    &quot;next&quot;: &quot;latest&quot;,
+    &quot;react&quot;: &quot;latest&quot;,
+    &quot;react-dom&quot;: &quot;latest&quot;
+  },
+  &quot;devDependencies&quot;: {
+    &quot;@types/node&quot;: &quot;latest&quot;,
+    &quot;@types/react&quot;: &quot;latest&quot;,
+    &quot;@types/react-dom&quot;: &quot;latest&quot;,
+    &quot;typescript&quot;: &quot;latest&quot;
+  }
+}</pre></details><details><summary>apps/web/proxy.ts</summary><pre>import { type NextRequest } from &#x27;next/server&#x27;
+import { updateSession } from &#x27;@/lib/supabase/proxy&#x27;
+
+export async function proxy(request: NextRequest) {
+  return updateSession(request)
+}
+
+export const config = {
+  matcher: [&#x27;/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)&#x27;],
+}
+</pre></details><details><summary>apps/web/tsconfig.json</summary><pre>{
+  &quot;compilerOptions&quot;: {
+    &quot;target&quot;: &quot;ES2017&quot;,
+    &quot;lib&quot;: [
+      &quot;dom&quot;,
+      &quot;dom.iterable&quot;,
+      &quot;esnext&quot;
+    ],
+    &quot;allowJs&quot;: false,
+    &quot;skipLibCheck&quot;: true,
+    &quot;strict&quot;: true,
+    &quot;noEmit&quot;: true,
+    &quot;esModuleInterop&quot;: true,
+    &quot;module&quot;: &quot;esnext&quot;,
+    &quot;moduleResolution&quot;: &quot;bundler&quot;,
+    &quot;resolveJsonModule&quot;: true,
+    &quot;isolatedModules&quot;: true,
+    &quot;jsx&quot;: &quot;preserve&quot;,
+    &quot;incremental&quot;: true,
+    &quot;plugins&quot;: [
+      {
+        &quot;name&quot;: &quot;next&quot;
+      }
+    ],
+    &quot;paths&quot;: {
+      &quot;@/*&quot;: [
+        &quot;./*&quot;
+      ]
+    },
+    &quot;baseUrl&quot;: &quot;.&quot;
+  },
+  &quot;include&quot;: [
+    &quot;next-env.d.ts&quot;,
+    &quot;.next/types/**/*.ts&quot;,
+    &quot;**/*.ts&quot;,
+    &quot;**/*.tsx&quot;
+  ],
+  &quot;exclude&quot;: [
+    &quot;node_modules&quot;
+  ]
+}</pre></details><details><summary>legacy/mirror_gram_prototype.html</summary><pre>&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+&lt;meta charset=&quot;UTF-8&quot;&gt;
+&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+&lt;title&gt;Mirror Gram — Creator Social&lt;/title&gt;
+&lt;style&gt;
+  :root{
+    --green:#18a558;
+    --dark:#087f43;
+    --bg:#f5faf7;
+    --text:#15231c;
+    --muted:#718078;
+    --card:#fff;
+    --border:#dfe9e3;
+    --shadow:0 8px 30px rgba(8,127,67,.08);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--text)}
+  button,input,textarea{font:inherit}
+  button{cursor:pointer}
+  .app{min-height:100vh}
+  .topbar{
+    position:sticky;top:0;z-index:10;height:68px;background:#fff;
+    border-bottom:1px solid var(--border);display:flex;align-items:center;
+    justify-content:space-between;padding:0 28px
+  }
+  .logo{font-weight:900;font-size:23px;color:var(--green);letter-spacing:-1px}
+  .logo span{color:var(--text)}
+  .top-search{width:min(360px,38vw);background:var(--bg);border:1px solid var(--border);border-radius:22px;padding:10px 16px;outline:none}
+  .layout{display:flex;max-width:1250px;margin:auto}
+  .sidebar{
+    width:230px;padding:24px 14px;position:sticky;top:68px;height:calc(100vh - 68px)
+  }
+  .nav-btn{
+    width:100%;border:0;background:transparent;padding:13px 16px;margin:3px 0;
+    text-align:left;border-radius:12px;color:#435149;font-weight:650
+  }
+  .nav-btn:hover,.nav-btn.active{background:#e9f7ef;color:var(--dark)}
+  .nav-icon{display:inline-block;width:27px}
+  .main{flex:1;max-width:690px;padding:26px 18px}
+  .rightbar{width:270px;padding:26px 14px}
+  .page{display:none}.page.active{display:block}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:18px;box-shadow:var(--shadow)}
+  .stories{display:flex;gap:14px;overflow:auto;padding:15px}
+  .story{text-align:center;min-width:65px;font-size:12px}
+  .avatar{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;background:#dff4e7;color:var(--dark);font-weight:800;margin:auto auto 6px}
+  .avatar.big{width:92px;height:92px;font-size:27px}
+  .post{margin-top:18px;overflow:hidden}
+  .post-head{display:flex;align-items:center;gap:10px;padding:15px}
+  .post-meta{flex:1}.post-meta strong{display:block}.post-meta small{color:var(--muted)}
+  .more{border:0;background:none;font-size:22px}
+  .media{
+    height:390px;background:linear-gradient(135deg,#b8edcd,#3ebd78 50%,#087f43);
+    display:grid;place-items:center;color:white;font-size:72px;font-weight:900
+  }
+  .media.two{background:linear-gradient(135deg,#d7f3e2,#8bd7aa)}
+  .post-body{padding:12px 15px}
+  .actions{display:flex;gap:8px;margin-bottom:9px}
+  .action{border:0;background:none;font-size:16px;padding:7px 9px;border-radius:9px}
+  .action:hover{background:var(--bg)}
+  .like.liked{color:#e44767}
+  .caption{line-height:1.45}.caption b{margin-right:5px}
+  .comments{color:var(--muted);font-size:14px;margin-top:8px}
+  .suggestions{padding:17px}
+  .suggestions h3{margin:0 0 15px;font-size:16px}
+  .suggest{display:flex;align-items:center;gap:9px;margin:12px 0}
+  .suggest .avatar{margin:0;width:38px;height:38px;font-size:12px}
+  .follow{margin-left:auto;border:0;background:var(--green);color:white;padding:7px 10px;border-radius:9px;font-weight:700}
+  .hero{padding:28px;text-align:center}
+  .hero h1{font-size:31px;margin:10px 0 6px}.hero p{color:var(--muted)}
+  .profile{padding:25px}.profile-top{display:flex;gap:20px;align-items:center}.profile-info h2{margin:0 0 5px}.profile-info p{color:var(--muted);margin:5px 0}
+  .profile-stats{display:flex;gap:25px;margin-top:14px}.profile-stats b{display:block}.profile-stats span{color:var(--muted);font-size:13px}
+  .profile-actions{margin-top:18px;display:flex;gap:9px}.primary{border:0;background:var(--green);color:white;border-radius:10px;padding:10px 18px;font-weight:750}.secondary{border:1px solid var(--border);background:#fff;border-radius:10px;padding:10px 18px;font-weight:700}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:15px}.tile{aspect-ratio:1;background:#ccefd9;display:grid;place-items:center;font-size:35px;color:var(--dark);border-radius:5px}
+  .discover-search{width:100%;padding:13px 15px;border:1px solid var(--border);border-radius:12px;outline:none;margin-bottom:18px}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 20px}.chip{border:1px solid var(--border);background:white;border-radius:20px;padding:8px 13px}
+  .messages{overflow:hidden}.chat{display:flex;gap:12px;padding:15px;border-bottom:1px solid var(--border);align-items:center}.chat:hover{background:var(--bg)}.chat .avatar{margin:0}.chat-info{flex:1}.chat-info p{margin:4px 0 0;color:var(--muted);font-size:13px}
+  .compose{padding:18px}.compose label{display:block;font-weight:700;margin:13px 0 7px}.compose input,.compose textarea{width:100%;border:1px solid var(--border);border-radius:10px;padding:11px;outline:none}.compose textarea{min-height:100px;resize:vertical}.preview{height:180px;border-radius:12px;background:#e4f6eb;display:grid;place-items:center;color:var(--dark);font-weight:800;margin-bottom:10px}
+  .map{height:470px;border-radius:18px;overflow:hidden;background:#e8f5ec;position:relative;border:1px solid var(--border)}.road{position:absolute;height:18px;background:white;transform:rotate(-23deg);width:120%;left:-10%;top:48%}.road.r2{transform:rotate(38deg);top:28%}.pin{position:absolute;background:var(--green);color:#fff;border-radius:50% 50% 50% 0;width:35px;height:35px;transform:rotate(-45deg);display:grid;place-items:center}.pin span{transform:rotate(45deg);font-size:16px}.event-list{margin-top:15px}.event{padding:13px;border-bottom:1px solid var(--border)}
+  .live{padding:25px}.live-box{height:390px;background:linear-gradient(135deg,#14251c,#18a558);border-radius:15px;display:grid;place-items:center;color:white;text-align:center}.live-box .circle{width:90px;height:90px;border-radius:50%;background:white;color:var(--green);display:grid;place-items:center;font-size:28px;font-weight:900}
+  .badge{font-size:11px;background:#e3f7eb;color:var(--dark);padding:4px 7px;border-radius:10px;font-weight:800}
+  .mobile-nav{display:none}
+  @media(max-width:900px){.rightbar{display:none}.sidebar{width:200px}}
+  @media(max-width:700px){
+    .topbar{padding:0 15px}.top-search{display:none}.sidebar{display:none}.main{padding:15px 10px;padding-bottom:80px}.mobile-nav{position:fixed;display:flex;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--border);z-index:20;justify-content:space-around;padding:8px}.mobile-nav button{border:0;background:none;font-size:20px}.mobile-nav small{display:block;font-size:9px}.media{height:340px}.profile-top{align-items:flex-start}.avatar.big{width:75px;height:75px}}
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div class=&quot;app&quot;&gt;
+&lt;header class=&quot;topbar&quot;&gt;
+  &lt;div class=&quot;logo&quot;&gt;MIRROR &lt;span&gt;GRAM&lt;/span&gt;&lt;/div&gt;
+  &lt;input class=&quot;top-search&quot; placeholder=&quot;Search creators, topics...&quot;&gt;
+  &lt;button class=&quot;action&quot; onclick=&quot;showPage(&#x27;notifications&#x27;)&quot;&gt;🔔&lt;/button&gt;
+&lt;/header&gt;
+
+&lt;div class=&quot;layout&quot;&gt;
+&lt;aside class=&quot;sidebar&quot;&gt;
+  &lt;button class=&quot;nav-btn active&quot; data-page=&quot;home&quot; onclick=&quot;showPage(&#x27;home&#x27;)&quot;&gt;🏠 &lt;span class=&quot;nav-icon&quot;&gt;&lt;/span&gt;Home&lt;/button&gt;
+  &lt;button class=&quot;nav-btn&quot; data-page=&quot;discover&quot; onclick=&quot;showPage(&#x27;discover&#x27;)&quot;&gt;🔎 &lt;span class=&quot;nav-icon&quot;&gt;&lt;/span&gt;Discover&lt;/button&gt;
+  &lt;button class=&quot;nav-btn&quot; data-page=&quot;create&quot; onclick=&quot;showPage(&#x27;create&#x27;)&quot;&gt;➕ &lt;span class=&quot;nav-icon&quot;&gt;&lt;/span&gt;Create&lt;/button&gt;
+  &lt;button class=&quot;nav-btn&quot; data-page=&quot;messages&quot; onclick=&quot;showPage(&#x27;messages&#x27;)&quot;&gt;💬 &lt;span class=&quot;nav-icon&quot;&gt;&lt;/span&gt;Messages&lt;/button&gt;
+  &lt;button class=&quot;nav-btn&quot; data-page=&quot;map&quot; onclick=&quot;showPage(&#x27;map&#x27;)&quot;&gt;🗺️ &lt;span class=&quot;nav-icon&quot;&gt;&lt;/span&gt;Map&lt;/button&gt;
+  &lt;button class=&quot;nav-btn&quot; data-page=&quot;profile&quot; onclick=&quot;showPage(&#x27;profile&#x27;)&quot;&gt;👤 &lt;span class=&quot;nav-icon&quot;&gt;&lt;/span&gt;Profile&lt;/button&gt;
+  &lt;hr style=&quot;border:0;border-top:1px solid var(--border);margin:20px 8px&quot;&gt;
+  &lt;button class=&quot;nav-btn&quot; onclick=&quot;alert(&#x27;Creator Studio is coming in the next build.&#x27;)&quot;&gt;🎬 &lt;span class=&quot;nav-icon&quot;&gt;&lt;/span&gt;Creator Studio&lt;/button&gt;
+  &lt;button class=&quot;nav-btn&quot; onclick=&quot;alert(&#x27;Safety Center will be connected to the moderation system in the full app.&#x27;)&quot;&gt;🛡️ &lt;span class=&quot;nav-icon&quot;&gt;&lt;/span&gt;Safety Center&lt;/button&gt;
+&lt;/aside&gt;
+
+&lt;main class=&quot;main&quot;&gt;
+
+&lt;section id=&quot;home&quot; class=&quot;page active&quot;&gt;
+  &lt;div class=&quot;card stories&quot;&gt;
+    &lt;div class=&quot;story&quot;&gt;&lt;div class=&quot;avatar&quot;&gt;MG&lt;/div&gt;You&lt;/div&gt;
+    &lt;div class=&quot;story&quot;&gt;&lt;div class=&quot;avatar&quot;&gt;AM&lt;/div&gt;Amara&lt;/div&gt;
+    &lt;div class=&quot;story&quot;&gt;&lt;div class=&quot;avatar&quot;&gt;JS&lt;/div&gt;Jay&lt;/div&gt;
+    &lt;div class=&quot;story&quot;&gt;&lt;div class=&quot;avatar&quot;&gt;SK&lt;/div&gt;Sofia&lt;/div&gt;
+    &lt;div class=&quot;story&quot;&gt;&lt;div class=&quot;avatar&quot;&gt;KD&lt;/div&gt;Kai&lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;article class=&quot;card post&quot;&gt;
+    &lt;div class=&quot;post-head&quot;&gt;&lt;div class=&quot;avatar&quot; style=&quot;margin:0&quot;&gt;AM&lt;/div&gt;&lt;div class=&quot;post-meta&quot;&gt;&lt;strong&gt;Amara Music &lt;span class=&quot;badge&quot;&gt;CREATOR&lt;/span&gt;&lt;/strong&gt;&lt;small&gt;@amara · 2h&lt;/small&gt;&lt;/div&gt;&lt;button class=&quot;more&quot;&gt;•••&lt;/button&gt;&lt;/div&gt;
+    &lt;div class=&quot;media&quot;&gt;♪&lt;/div&gt;
+    &lt;div class=&quot;post-body&quot;&gt;
+      &lt;div class=&quot;actions&quot;&gt;
+        &lt;button class=&quot;action like&quot; onclick=&quot;toggleLike(this)&quot;&gt;♡ &lt;span&gt;1,284&lt;/span&gt;&lt;/button&gt;
+        &lt;button class=&quot;action&quot;&gt;💬 86&lt;/button&gt;&lt;button class=&quot;action&quot;&gt;↗ Share&lt;/button&gt;&lt;button class=&quot;action&quot; style=&quot;margin-left:auto&quot;&gt;🔖&lt;/button&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;caption&quot;&gt;&lt;b&gt;@amara&lt;/b&gt; New music, new energy. Thanks for being part of the journey! 🌱&lt;/div&gt;
+      &lt;div class=&quot;comments&quot;&gt;View all 86 comments&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/article&gt;
+
+  &lt;article class=&quot;card post&quot;&gt;
+    &lt;div class=&quot;post-head&quot;&gt;&lt;div class=&quot;avatar&quot; style=&quot;margin:0&quot;&gt;JS&lt;/div&gt;&lt;div class=&quot;post-meta&quot;&gt;&lt;strong&gt;Jay Creates&lt;/strong&gt;&lt;small&gt;@jaycreates · 5h&lt;/small&gt;&lt;/div&gt;&lt;button class=&quot;more&quot;&gt;•••&lt;/button&gt;&lt;/div&gt;
+    &lt;div class=&quot;media two&quot;&gt;✦&lt;/div&gt;
+    &lt;div class=&quot;post-body&quot;&gt;&lt;div class=&quot;actions&quot;&gt;&lt;button class=&quot;action like&quot; onclick=&quot;toggleLike(this)&quot;&gt;♡ &lt;span&gt;642&lt;/span&gt;&lt;/button&gt;&lt;button class=&quot;action&quot;&gt;💬 31&lt;/button&gt;&lt;button class=&quot;action&quot;&gt;↗ Share&lt;/button&gt;&lt;/div&gt;&lt;div class=&quot;caption&quot;&gt;&lt;b&gt;@jaycreates&lt;/b&gt; Behind the scenes from today&#x27;s creative session.&lt;/div&gt;&lt;/div&gt;
+  &lt;/article&gt;
+&lt;/section&gt;
+
+&lt;section id=&quot;discover&quot; class=&quot;page&quot;&gt;
+  &lt;div class=&quot;hero card&quot;&gt;&lt;h1&gt;Discover&lt;/h1&gt;&lt;p&gt;Find creators, ideas and communities that inspire you.&lt;/p&gt;&lt;/div&gt;
+  &lt;br&gt;&lt;input class=&quot;discover-search&quot; placeholder=&quot;🔎 Search creators, topics, hashtags...&quot;&gt;
+  &lt;h3&gt;Explore categories&lt;/h3&gt;
+  &lt;div class=&quot;chips&quot;&gt;&lt;button class=&quot;chip&quot;&gt;🎵 Music&lt;/button&gt;&lt;button class=&quot;chip&quot;&gt;💃 Dance&lt;/button&gt;&lt;button class=&quot;chip&quot;&gt;🎮 Gaming&lt;/button&gt;&lt;button class=&quot;chip&quot;&gt;🎨 Art&lt;/button&gt;&lt;button class=&quot;chip&quot;&gt;😂 Comedy&lt;/button&gt;&lt;button class=&quot;chip&quot;&gt;⚽ Sports&lt;/button&gt;&lt;button class=&quot;chip&quot;&gt;🎭 Acting&lt;/button&gt;&lt;/div&gt;
+  &lt;h3&gt;Creators to discover&lt;/h3&gt;
+  &lt;div class=&quot;card suggestions&quot;&gt;
+    &lt;div class=&quot;suggest&quot;&gt;&lt;div class=&quot;avatar&quot;&gt;SK&lt;/div&gt;&lt;div&gt;&lt;b&gt;Sofia K&lt;/b&gt;&lt;small style=&quot;display:block;color:var(--muted)&quot;&gt;Artist · 8.2K followers&lt;/small&gt;&lt;/div&gt;&lt;button class=&quot;follow&quot; onclick=&quot;follow(this)&quot;&gt;Follow&lt;/button&gt;&lt;/div&gt;
+    &lt;div class=&quot;suggest&quot;&gt;&lt;div class=&quot;avatar&quot;&gt;KD&lt;/div&gt;&lt;div&gt;&lt;b&gt;Kai Digital&lt;/b&gt;&lt;small style=&quot;display:block;color:var(--muted)&quot;&gt;Creator · 12K followers&lt;/small&gt;&lt;/div&gt;&lt;button class=&quot;follow&quot; onclick=&quot;follow(this)&quot;&gt;Follow&lt;/button&gt;&lt;/div&gt;
+    &lt;div class=&quot;suggest&quot;&gt;&lt;div class=&quot;avatar&quot;&gt;LM&lt;/div&gt;&lt;div&gt;&lt;b&gt;Lina M&lt;/b&gt;&lt;small style=&quot;display:block;color:var(--muted)&quot;&gt;Dance · 4.7K followers&lt;/small&gt;&lt;/div&gt;&lt;button class=&quot;follow&quot; onclick=&quot;follow(this)&quot;&gt;Follow&lt;/button&gt;&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/section&gt;
+
+&lt;section id=&quot;create&quot; class=&quot;page&quot;&gt;
+  &lt;div class=&quot;card compose&quot;&gt;&lt;h2&gt;Create a post&lt;/h2&gt;&lt;div class=&quot;preview&quot; id=&quot;preview&quot;&gt;📷 Your media preview&lt;/div&gt;&lt;label&gt;Photo or video&lt;/label&gt;&lt;input type=&quot;file&quot; accept=&quot;image/*,video/*&quot; onchange=&quot;previewMedia(event)&quot;&gt;&lt;label&gt;Caption&lt;/label&gt;&lt;textarea placeholder=&quot;Tell your story...&quot;&gt;&lt;/textarea&gt;&lt;label&gt;Visibility&lt;/label&gt;&lt;select style=&quot;width:100%;padding:11px;border:1px solid var(--border);border-radius:10px&quot;&gt;&lt;option&gt;Everyone&lt;/option&gt;&lt;option&gt;Followers&lt;/option&gt;&lt;option&gt;Private&lt;/option&gt;&lt;/select&gt;&lt;br&gt;&lt;br&gt;&lt;button class=&quot;primary&quot; onclick=&quot;publishPost()&quot;&gt;Publish post&lt;/button&gt; &lt;button class=&quot;secondary&quot; onclick=&quot;showPage(&#x27;home&#x27;)&quot;&gt;Cancel&lt;/button&gt;&lt;/div&gt;
+  &lt;br&gt;&lt;div class=&quot;card live&quot;&gt;&lt;h2&gt;🔴 Go Live&lt;/h2&gt;&lt;p style=&quot;color:var(--muted)&quot;&gt;Livestreaming will be connected to the secure live-video service in the next development phase.&lt;/p&gt;&lt;button class=&quot;primary&quot; onclick=&quot;alert(&#x27;Live streaming is planned for a later build.&#x27;)&quot;&gt;Prepare Live&lt;/button&gt;&lt;/div&gt;
+&lt;/section&gt;
+
+&lt;section id=&quot;messages&quot; class=&quot;page&quot;&gt;
+  &lt;div class=&quot;card&quot;&gt;&lt;div style=&quot;padding:18px&quot;&gt;&lt;h2 style=&quot;margin:0&quot;&gt;Messages&lt;/h2&gt;&lt;input class=&quot;discover-search&quot; style=&quot;margin-top:14px;margin-bottom:0&quot; placeholder=&quot;🔎 Search messages...&quot;&gt;&lt;/div&gt;
+  &lt;div class=&quot;messages&quot;&gt;
+    &lt;div class=&quot;chat&quot; onclick=&quot;openChat(&#x27;Amara Music&#x27;)&quot;&gt;&lt;div class=&quot;avatar&quot;&gt;AM&lt;/div&gt;&lt;div class=&quot;chat-info&quot;&gt;&lt;b&gt;Amara Music&lt;/b&gt;&lt;p&gt;Thanks! Let&#x27;s talk about the collaboration.&lt;/p&gt;&lt;/div&gt;&lt;small&gt;2h&lt;/small&gt;&lt;/div&gt;
+    &lt;div class=&quot;chat&quot; onclick=&quot;openChat(&#x27;Jay Creates&#x27;)&quot;&gt;&lt;div class=&quot;avatar&quot;&gt;JS&lt;/div&gt;&lt;div class=&quot;chat-info&quot;&gt;&lt;b&gt;Jay Creates&lt;/b&gt;&lt;p&gt;Check out this new video!&lt;/p&gt;&lt;/div&gt;&lt;small&gt;5h&lt;/small&gt;&lt;/div&gt;
+    &lt;div class=&quot;chat&quot; onclick=&quot;openChat(&#x27;Sofia K&#x27;)&quot;&gt;&lt;div class=&quot;avatar&quot;&gt;SK&lt;/div&gt;&lt;div class=&quot;chat-info&quot;&gt;&lt;b&gt;Sofia K&lt;/b&gt;&lt;p&gt;Hey 👋&lt;/p&gt;&lt;/div&gt;&lt;small&gt;1d&lt;/small&gt;&lt;/div&gt;
+  &lt;/div&gt;&lt;/div&gt;
+&lt;/section&gt;
+
+&lt;section id=&quot;map&quot; class=&quot;page&quot;&gt;
+  &lt;div class=&quot;hero card&quot;&gt;&lt;h1&gt;Creator Map&lt;/h1&gt;&lt;p&gt;Discover public creator events and communities. Exact personal locations are never shown.&lt;/p&gt;&lt;/div&gt;&lt;br&gt;
+  &lt;div class=&quot;map&quot;&gt;&lt;div class=&quot;road&quot;&gt;&lt;/div&gt;&lt;div class=&quot;road r2&quot;&gt;&lt;/div&gt;&lt;div class=&quot;pin&quot; style=&quot;left:25%;top:30%&quot;&gt;&lt;span&gt;🎤&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;pin&quot; style=&quot;left:65%;top:55%&quot;&gt;&lt;span&gt;🎨&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;pin&quot; style=&quot;left:43%;top:72%&quot;&gt;&lt;span&gt;⭐&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;div class=&quot;card event-list&quot;&gt;&lt;div class=&quot;event&quot;&gt;&lt;b&gt;🎤 Community Music Session&lt;/b&gt;&lt;br&gt;&lt;small&gt;Public event · Tomorrow&lt;/small&gt;&lt;/div&gt;&lt;div class=&quot;event&quot;&gt;&lt;b&gt;🎨 Young Creators Workshop&lt;/b&gt;&lt;br&gt;&lt;small&gt;Public event · Saturday&lt;/small&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;/section&gt;
+
+&lt;section id=&quot;profile&quot; class=&quot;page&quot;&gt;
+  &lt;div class=&quot;card profile&quot;&gt;&lt;div class=&quot;profile-top&quot;&gt;&lt;div class=&quot;avatar big&quot;&gt;MG&lt;/div&gt;&lt;div class=&quot;profile-info&quot;&gt;&lt;h2&gt;Mirror Creator&lt;/h2&gt;&lt;div&gt;@mirrorcreator &lt;span class=&quot;badge&quot;&gt;CREATOR&lt;/span&gt;&lt;/div&gt;&lt;p&gt;Sharing creativity and building something positive. 🌱&lt;/p&gt;&lt;div class=&quot;profile-stats&quot;&gt;&lt;div&gt;&lt;b&gt;24&lt;/b&gt;&lt;span&gt;Posts&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;b&gt;1,248&lt;/b&gt;&lt;span&gt;Followers&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;b&gt;318&lt;/b&gt;&lt;span&gt;Following&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;profile-actions&quot;&gt;&lt;button class=&quot;primary&quot;&gt;Edit profile&lt;/button&gt;&lt;button class=&quot;secondary&quot;&gt;Share profile&lt;/button&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;div class=&quot;grid&quot;&gt;&lt;div class=&quot;tile&quot;&gt;♪&lt;/div&gt;&lt;div class=&quot;tile&quot;&gt;✦&lt;/div&gt;&lt;div class=&quot;tile&quot;&gt;★&lt;/div&gt;&lt;div class=&quot;tile&quot;&gt;🎨&lt;/div&gt;&lt;div class=&quot;tile&quot;&gt;🎬&lt;/div&gt;&lt;div class=&quot;tile&quot;&gt;🌱&lt;/div&gt;&lt;/div&gt;
+&lt;/section&gt;
+
+&lt;section id=&quot;notifications&quot; class=&quot;page&quot;&gt;
+  &lt;div class=&quot;card&quot; style=&quot;padding:20px&quot;&gt;&lt;h2&gt;Notifications&lt;/h2&gt;&lt;p&gt;❤️ Amara liked your post.&lt;/p&gt;&lt;p&gt;👤 Kai started following you.&lt;/p&gt;&lt;p&gt;💬 Jay commented on your video.&lt;/p&gt;&lt;p&gt;🏆 You reached 1,000 followers!&lt;/p&gt;&lt;/div&gt;
+&lt;/section&gt;
+
+&lt;/main&gt;
+
+&lt;aside class=&quot;rightbar&quot;&gt;
+  &lt;div class=&quot;card suggestions&quot;&gt;&lt;h3&gt;Suggested creators&lt;/h3&gt;
+    &lt;div class=&quot;suggest&quot;&gt;&lt;div class=&quot;avatar&quot;&gt;AM&lt;/div&gt;&lt;div&gt;&lt;b&gt;Amara&lt;/b&gt;&lt;small style=&quot;display:block;color:var(--muted)&quot;&gt;Music&lt;/small&gt;&lt;/div&gt;&lt;button class=&quot;follow&quot; onclick=&quot;follow(this)&quot;&gt;Follow&lt;/button&gt;&lt;/div&gt;
+    &lt;div class=&quot;suggest&quot;&gt;&lt;div class=&quot;avatar&quot;&gt;JS&lt;/div&gt;&lt;div&gt;&lt;b&gt;Jay&lt;/b&gt;&lt;small style=&quot;display:block;color:var(--muted)&quot;&gt;Creator&lt;/small&gt;&lt;/div&gt;&lt;button class=&quot;follow&quot; onclick=&quot;follow(this)&quot;&gt;Follow&lt;/button&gt;&lt;/div&gt;
+  &lt;/div&gt;
+  &lt;br&gt;
+  &lt;div class=&quot;card suggestions&quot;&gt;&lt;h3&gt;🌱 Creator Journey&lt;/h3&gt;&lt;p&gt;🌱 Beginner&lt;/p&gt;&lt;p&gt;⭐ Rising Creator&lt;/p&gt;&lt;p&gt;🚀 Growing Creator&lt;/p&gt;&lt;small style=&quot;color:var(--muted)&quot;&gt;Milestones will unlock as your creator profile grows.&lt;/small&gt;&lt;/div&gt;
+&lt;/aside&gt;
+&lt;/div&gt;
+
+&lt;nav class=&quot;mobile-nav&quot;&gt;
+  &lt;button onclick=&quot;showPage(&#x27;home&#x27;)&quot;&gt;🏠&lt;small&gt;Home&lt;/small&gt;&lt;/button&gt;
+  &lt;button onclick=&quot;showPage(&#x27;discover&#x27;)&quot;&gt;🔎&lt;small&gt;Discover&lt;/small&gt;&lt;/button&gt;
+  &lt;button onclick=&quot;showPage(&#x27;create&#x27;)&quot;&gt;➕&lt;small&gt;Create&lt;/small&gt;&lt;/button&gt;
+  &lt;button onclick=&quot;showPage(&#x27;messages&#x27;)&quot;&gt;💬&lt;small&gt;Messages&lt;/small&gt;&lt;/button&gt;
+  &lt;button onclick=&quot;showPage(&#x27;profile&#x27;)&quot;&gt;👤&lt;small&gt;Profile&lt;/small&gt;&lt;/button&gt;
+&lt;/nav&gt;
+&lt;/div&gt;
+
+&lt;script&gt;
+function showPage(id){
+  document.querySelectorAll(&#x27;.page&#x27;).forEach(p=&gt;p.classList.remove(&#x27;active&#x27;));
+  const page=document.getElementById(id); if(page) page.classList.add(&#x27;active&#x27;);
+  document.querySelectorAll(&#x27;.nav-btn&#x27;).forEach(b=&gt;b.classList.toggle(&#x27;active&#x27;,b.dataset.page===id));
+  window.scrollTo({top:0,behavior:&#x27;smooth&#x27;});
+}
+function toggleLike(btn){
+  const count=btn.querySelector(&#x27;span&#x27;); let n=parseInt(count.textContent.replace(/,/g,&#x27;&#x27;),10);
+  btn.classList.toggle(&#x27;liked&#x27;); const liked=btn.classList.contains(&#x27;liked&#x27;);
+  count.textContent=(n+(liked?1:-1)).toLocaleString(); btn.firstChild.textContent=liked?&#x27;♥ &#x27;:&#x27;♡ &#x27;;
+}
+function follow(btn){btn.textContent=btn.textContent===&#x27;Follow&#x27;?&#x27;Following&#x27;:&#x27;Follow&#x27;;}
+function previewMedia(event){
+  const file=event.target.files[0], preview=document.getElementById(&#x27;preview&#x27;);
+  if(!file)return;
+  if(file.type.startsWith(&#x27;image/&#x27;)){
+    const url=URL.createObjectURL(file); preview.innerHTML=&#x27;&lt;img src=&quot;&#x27;+url+&#x27;&quot; style=&quot;width:100%;height:100%;object-fit:cover;border-radius:12px&quot;&gt;&#x27;;
+  }else{preview.innerHTML=&#x27;🎬 &#x27;+file.name;}
+}
+function publishPost(){
+  alert(&#x27;Demo post published! The real version will upload your media to the Mirror Gram backend.&#x27;);
+  showPage(&#x27;home&#x27;);
+}
+function openChat(name){alert(&#x27;Opening chat with &#x27;+name+&#x27; — real-time messaging will be connected in the next backend phase.&#x27;);}
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre></details><details><summary>legacy/mirror_gram_v2.html</summary><pre>&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+&lt;meta charset=&quot;UTF-8&quot;&gt;
+&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+&lt;title&gt;Mirror Gram v2&lt;/title&gt;
+&lt;style&gt;
+:root{--green:#159447;--dark:#0d6b34;--light:#eefaf2;--text:#173122;--muted:#6b7c71;--line:#dce9df}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f7fbf8;color:var(--text)}
+.app{max-width:1250px;margin:auto;display:grid;grid-template-columns:220px 1fr 250px;gap:18px;padding:18px}
+.side,.right{position:sticky;top:18px;height:fit-content}.brand{font-size:25px;font-weight:800;color:var(--green);padding:12px}
+nav button{display:block;width:100%;padding:12px;margin:4px 0;border:0;border-radius:12px;background:transparent;text-align:left;color:var(--text)}
+nav button:hover,nav button.active{background:var(--light);color:var(--dark);font-weight:700}
+.card{background:white;border:1px solid var(--line);border-radius:17px;padding:17px;margin-bottom:15px;box-shadow:0 5px 22px #15944712}
+.page{display:none}.page.active{display:block}.top{display:flex;justify-content:space-between;align-items:center}
+.avatar{width:44px;height:44px;border-radius:50%;background:#53bd78;color:white;display:grid;place-items:center;font-weight:800}
+.user{display:flex;align-items:center;gap:10px}.user small{display:block;color:var(--muted);margin-top:3px}
+.row{display:flex;gap:9px;align-items:center}.between{justify-content:space-between}
+button,input,textarea,select{font:inherit}button{cursor:pointer}
+.primary{background:var(--green);color:white;border:0;border-radius:10px;padding:10px 14px;font-weight:700}
+.secondary,.actions button{background:white;border:1px solid var(--line);border-radius:10px;padding:9px 12px}
+input,textarea,select{width:100%;padding:11px;border:1px solid var(--line);border-radius:10px;margin:6px 0 12px}
+textarea{min-height:100px}.muted{color:var(--muted)}.pill{background:var(--light);color:var(--dark);padding:6px 10px;border-radius:99px;font-size:12px;font-weight:700}
+.postmedia{height:330px;margin:14px -17px;background:var(--light);display:grid;place-items:center;overflow:hidden;font-size:45px;color:var(--green)}
+.postmedia img,.postmedia video{width:100%;height:100%;object-fit:cover}.actions{display:flex;gap:8px}
+.chips{display:flex;gap:7px;overflow:auto}.chips button{white-space:nowrap;border:1px solid var(--line);background:white;border-radius:99px;padding:8px 12px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}.grid div{height:125px;background:var(--light);display:grid;place-items:center;font-size:28px}
+.map{height:360px;background:#dff1e4;position:relative;border-radius:14px;overflow:hidden}.road{position:absolute;background:white;width:120%;height:40px;left:-10%;top:45%;transform:rotate(25deg)}.pin{position:absolute;background:var(--green);color:white;border-radius:50%;padding:9px}
+.chat{height:320px;overflow:auto;background:#f3faf5;border-radius:12px;padding:12px}.bubble{padding:9px 12px;border-radius:13px;max-width:75%;margin:7px 0}.mine{margin-left:auto;background:#d9f3e2}.theirs{background:white;border:1px solid var(--line)}
+.mobile{display:none}
+@media(max-width:950px){.app{grid-template-columns:180px 1fr}.right{display:none}}
+@media(max-width:650px){.app{display:block;padding:10px}.side{display:none}.mobile{display:flex;position:fixed;bottom:0;left:0;right:0;background:white;border-top:1px solid var(--line);z-index:9;justify-content:space-around;padding:6px}.mobile button{border:0;background:white;font-size:19px}.main{padding-bottom:65px}}
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div class=&quot;app&quot;&gt;
+&lt;aside class=&quot;side&quot;&gt;&lt;div class=&quot;brand&quot;&gt;🌱 Mirror Gram&lt;/div&gt;
+&lt;nav&gt;
+&lt;button class=&quot;active&quot; onclick=&quot;page(&#x27;home&#x27;,this)&quot;&gt;🏠 Home&lt;/button&gt;
+&lt;button onclick=&quot;page(&#x27;discover&#x27;,this)&quot;&gt;🔎 Discover&lt;/button&gt;
+&lt;button onclick=&quot;page(&#x27;create&#x27;,this)&quot;&gt;➕ Create&lt;/button&gt;
+&lt;button onclick=&quot;page(&#x27;messages&#x27;,this)&quot;&gt;💬 Messages&lt;/button&gt;
+&lt;button onclick=&quot;page(&#x27;map&#x27;,this)&quot;&gt;🗺️ Map&lt;/button&gt;
+&lt;button onclick=&quot;page(&#x27;live&#x27;,this)&quot;&gt;🔴 Live&lt;/button&gt;
+&lt;button onclick=&quot;page(&#x27;profile&#x27;,this)&quot;&gt;👤 Profile&lt;/button&gt;
+&lt;button onclick=&quot;page(&#x27;studio&#x27;,this)&quot;&gt;📈 Creator Studio&lt;/button&gt;
+&lt;button onclick=&quot;page(&#x27;safety&#x27;,this)&quot;&gt;🛡️ Safety&lt;/button&gt;
+&lt;/nav&gt;&lt;/aside&gt;
+
+&lt;main class=&quot;main&quot;&gt;
+&lt;section id=&quot;home&quot; class=&quot;page active&quot;&gt;&lt;div class=&quot;top&quot;&gt;&lt;h1&gt;Home&lt;/h1&gt;&lt;span class=&quot;pill&quot;&gt;Green community&lt;/span&gt;&lt;/div&gt;&lt;div id=&quot;feed&quot;&gt;&lt;/div&gt;&lt;/section&gt;
+
+&lt;section id=&quot;discover&quot; class=&quot;page&quot;&gt;&lt;div class=&quot;top&quot;&gt;&lt;h1&gt;Discover&lt;/h1&gt;&lt;/div&gt;
+&lt;div class=&quot;card&quot;&gt;&lt;input id=&quot;search&quot; placeholder=&quot;Search creators or topics&quot; oninput=&quot;discover()&quot;&gt;&lt;div class=&quot;chips&quot;&gt;&lt;button&gt;Music&lt;/button&gt;&lt;button&gt;Gaming&lt;/button&gt;&lt;button&gt;Art&lt;/button&gt;&lt;button&gt;Comedy&lt;/button&gt;&lt;button&gt;Sport&lt;/button&gt;&lt;/div&gt;&lt;/div&gt;&lt;div id=&quot;discoverList&quot;&gt;&lt;/div&gt;&lt;/section&gt;
+
+&lt;section id=&quot;create&quot; class=&quot;page&quot;&gt;&lt;h1&gt;Create&lt;/h1&gt;&lt;div class=&quot;card&quot;&gt;
+&lt;h3&gt;Make a post&lt;/h3&gt;&lt;input id=&quot;file&quot; type=&quot;file&quot; accept=&quot;image/*,video/*&quot; onchange=&quot;preview(event)&quot;&gt;
+&lt;div id=&quot;preview&quot; class=&quot;muted&quot;&gt;Choose a photo or video to preview it here.&lt;/div&gt;
+&lt;textarea id=&quot;caption&quot; placeholder=&quot;Write a caption...&quot;&gt;&lt;/textarea&gt;
+&lt;select id=&quot;visibility&quot;&gt;&lt;option&gt;Everyone&lt;/option&gt;&lt;option&gt;Followers&lt;/option&gt;&lt;option&gt;Private&lt;/option&gt;&lt;/select&gt;
+&lt;button class=&quot;primary&quot; onclick=&quot;publish()&quot;&gt;Publish demo post&lt;/button&gt;
+&lt;/div&gt;&lt;/section&gt;
+
+&lt;section id=&quot;messages&quot; class=&quot;page&quot;&gt;&lt;h1&gt;Messages&lt;/h1&gt;&lt;div class=&quot;card&quot; id=&quot;chats&quot;&gt;&lt;/div&gt;
+&lt;div class=&quot;card&quot; id=&quot;conversation&quot; style=&quot;display:none&quot;&gt;&lt;div class=&quot;row between&quot;&gt;&lt;b id=&quot;chatName&quot;&gt;&lt;/b&gt;&lt;button class=&quot;secondary&quot; onclick=&quot;closeChat()&quot;&gt;Back&lt;/button&gt;&lt;/div&gt;
+&lt;div id=&quot;chat&quot; class=&quot;chat&quot;&gt;&lt;/div&gt;&lt;div class=&quot;row&quot;&gt;&lt;input id=&quot;msg&quot; placeholder=&quot;Message...&quot; style=&quot;margin:8px 0&quot;&gt;&lt;button class=&quot;primary&quot; onclick=&quot;send()&quot;&gt;Send&lt;/button&gt;&lt;/div&gt;&lt;/div&gt;&lt;/section&gt;
+
+&lt;section id=&quot;map&quot; class=&quot;page&quot;&gt;&lt;h1&gt;Map&lt;/h1&gt;&lt;div class=&quot;card&quot;&gt;&lt;div class=&quot;pill&quot;&gt;Public events only&lt;/div&gt;&lt;p class=&quot;muted&quot;&gt;The real app should never reveal a young person&#x27;s exact private location.&lt;/p&gt;
+&lt;div class=&quot;map&quot;&gt;&lt;div class=&quot;road&quot;&gt;&lt;/div&gt;&lt;div class=&quot;pin&quot; style=&quot;left:25%;top:25%&quot;&gt;★&lt;/div&gt;&lt;div class=&quot;pin&quot; style=&quot;left:65%;top:60%&quot;&gt;♪&lt;/div&gt;&lt;div class=&quot;pin&quot; style=&quot;left:48%;top:75%&quot;&gt;●&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/section&gt;
+
+&lt;section id=&quot;live&quot; class=&quot;page&quot;&gt;&lt;h1&gt;Live&lt;/h1&gt;&lt;div class=&quot;card&quot;&gt;&lt;h3&gt;Start a live stream&lt;/h3&gt;&lt;p class=&quot;muted&quot;&gt;Prototype only. Production live streaming requires server-side streaming, moderation, reporting and age-safety controls.&lt;/p&gt;
+&lt;input id=&quot;liveTitle&quot; placeholder=&quot;Live title&quot;&gt;&lt;button class=&quot;primary&quot; onclick=&quot;live()&quot;&gt;Start demo live&lt;/button&gt;&lt;/div&gt;&lt;/section&gt;
+
+&lt;section id=&quot;profile&quot; class=&quot;page&quot;&gt;&lt;div class=&quot;card&quot;&gt;&lt;div class=&quot;user&quot;&gt;&lt;div class=&quot;avatar&quot;&gt;MG&lt;/div&gt;&lt;div&gt;&lt;h2 style=&quot;margin:0&quot;&gt;Mirror Creator&lt;/h2&gt;&lt;small&gt;@mirrorcreator · Creator&lt;/small&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Sharing creative projects and positive community moments.&lt;/p&gt;&lt;div class=&quot;row&quot;&gt;&lt;b&gt;24 Posts&lt;/b&gt;&lt;b&gt;1.2K Followers&lt;/b&gt;&lt;b&gt;310 Following&lt;/b&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;card&quot;&gt;&lt;h3&gt;Posts&lt;/h3&gt;&lt;div class=&quot;grid&quot;&gt;&lt;div&gt;🎵&lt;/div&gt;&lt;div&gt;🎨&lt;/div&gt;&lt;div&gt;🎮&lt;/div&gt;&lt;div&gt;📷&lt;/div&gt;&lt;div&gt;✨&lt;/div&gt;&lt;div&gt;🌱&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/section&gt;
+
+&lt;section id=&quot;studio&quot; class=&quot;page&quot;&gt;&lt;h1&gt;Creator Studio&lt;/h1&gt;&lt;div class=&quot;card&quot;&gt;&lt;h3&gt;Creator Journey&lt;/h3&gt;&lt;p&gt;🌱 Complete your profile&lt;/p&gt;&lt;p&gt;🎬 Publish your first post&lt;/p&gt;&lt;p&gt;💬 Build a positive community&lt;/p&gt;&lt;p&gt;🛡️ Keep your account safe&lt;/p&gt;&lt;/div&gt;
+&lt;div class=&quot;card&quot;&gt;&lt;h3&gt;Demo analytics&lt;/h3&gt;&lt;div class=&quot;row&quot;&gt;&lt;b&gt;8.4K Views&lt;/b&gt;&lt;b&gt;640 Likes&lt;/b&gt;&lt;b&gt;72 Shares&lt;/b&gt;&lt;/div&gt;&lt;/div&gt;&lt;/section&gt;
+
+&lt;section id=&quot;safety&quot; class=&quot;page&quot;&gt;&lt;h1&gt;Safety Center&lt;/h1&gt;&lt;div class=&quot;card&quot;&gt;&lt;h3&gt;Community controls&lt;/h3&gt;&lt;p class=&quot;muted&quot;&gt;Production launch should include strong privacy, blocking, reporting, moderation and age-appropriate protections.&lt;/p&gt;
+&lt;button class=&quot;secondary&quot; onclick=&quot;alert(&#x27;Demo: report submitted.&#x27;)&quot;&gt;Report content&lt;/button&gt; &lt;button class=&quot;secondary&quot; onclick=&quot;alert(&#x27;Demo: account blocked.&#x27;)&quot;&gt;Block account&lt;/button&gt;&lt;/div&gt;
+&lt;div class=&quot;card&quot;&gt;&lt;h3&gt;Privacy&lt;/h3&gt;&lt;label&gt;&lt;input type=&quot;checkbox&quot; checked&gt; Hide exact location&lt;/label&gt;&lt;label&gt;&lt;input type=&quot;checkbox&quot; checked&gt; Review message requests&lt;/label&gt;&lt;/div&gt;&lt;/section&gt;
+&lt;/main&gt;
+
+&lt;aside class=&quot;right&quot;&gt;&lt;div class=&quot;card&quot;&gt;&lt;h3&gt;Creator Journey&lt;/h3&gt;&lt;p&gt;🌱 Profile&lt;/p&gt;&lt;p&gt;🎬 Create&lt;/p&gt;&lt;p&gt;💬 Community&lt;/p&gt;&lt;p&gt;🛡️ Safety&lt;/p&gt;&lt;/div&gt;&lt;/aside&gt;
+&lt;/div&gt;
+&lt;div class=&quot;mobile&quot;&gt;&lt;button onclick=&quot;page(&#x27;home&#x27;)&quot;&gt;🏠&lt;/button&gt;&lt;button onclick=&quot;page(&#x27;discover&#x27;)&quot;&gt;🔎&lt;/button&gt;&lt;button onclick=&quot;page(&#x27;create&#x27;)&quot;&gt;➕&lt;/button&gt;&lt;button onclick=&quot;page(&#x27;messages&#x27;)&quot;&gt;💬&lt;/button&gt;&lt;button onclick=&quot;page(&#x27;profile&#x27;)&quot;&gt;👤&lt;/button&gt;&lt;/div&gt;
+
+&lt;script&gt;
+let creators=[
+{name:&quot;Luna Beats&quot;,handle:&quot;@lunabeats&quot;,type:&quot;Music&quot;,likes:128,followed:false,icon:&quot;🎵&quot;,text:&quot;A new creative session from today.&quot;},
+{name:&quot;Jay Creates&quot;,handle:&quot;@jaycreates&quot;,type:&quot;Art&quot;,likes:94,followed:false,icon:&quot;🎨&quot;,text:&quot;Trying a new creative style.&quot;},
+{name:&quot;Pixel Nova&quot;,handle:&quot;@pixelnova&quot;,type:&quot;Gaming&quot;,likes:207,followed:true,icon:&quot;🎮&quot;,text:&quot;Sharing some building ideas.&quot;}
+];
+let chats=[{name:&quot;Luna Beats&quot;,m:[[&quot;theirs&quot;,&quot;Hey! Great post!&quot;],[&quot;mine&quot;,&quot;Thanks!&quot;]]},{name:&quot;Jay Creates&quot;,m:[[&quot;theirs&quot;,&quot;Want to collaborate?&quot;],[&quot;mine&quot;,&quot;Sounds good!&quot;]]}],current=-1;
+function page(id,btn){document.querySelectorAll(&quot;.page&quot;).forEach(x=&gt;x.classList.remove(&quot;active&quot;));document.getElementById(id).classList.add(&quot;active&quot;);document.querySelectorAll(&quot;nav button&quot;).forEach(x=&gt;x.classList.remove(&quot;active&quot;));if(btn)btn.classList.add(&quot;active&quot;);if(id===&quot;discover&quot;)discover();if(id===&quot;messages&quot;)renderChats()}
+function feed(){document.getElementById(&quot;feed&quot;).innerHTML=creators.map((c,i)=&gt;`&lt;article class=&quot;card&quot;&gt;&lt;div class=&quot;row between&quot;&gt;&lt;div class=&quot;user&quot;&gt;&lt;div class=&quot;avatar&quot;&gt;${c.name[0]}&lt;/div&gt;&lt;div&gt;&lt;b&gt;${c.name}&lt;/b&gt;&lt;small&gt;${c.handle} · ${c.type}&lt;/small&gt;&lt;/div&gt;&lt;/div&gt;&lt;button class=&quot;secondary&quot; onclick=&quot;follow(${i})&quot;&gt;${c.followed?&quot;Following&quot;:&quot;Follow&quot;}&lt;/button&gt;&lt;/div&gt;&lt;div class=&quot;postmedia&quot;&gt;${c.media?`&lt;img src=&quot;${c.media}&quot;&gt;`:c.icon}&lt;/div&gt;&lt;p&gt;${c.text}&lt;/p&gt;&lt;div class=&quot;actions&quot;&gt;&lt;button onclick=&quot;like(this,${c.likes})&quot;&gt;♡ ${c.likes}&lt;/button&gt;&lt;button onclick=&quot;alert(&#x27;Demo comment panel&#x27;)&quot;&gt;💬 Comment&lt;/button&gt;&lt;button onclick=&quot;alert(&#x27;Demo share menu&#x27;)&quot;&gt;↗ Share&lt;/button&gt;&lt;/div&gt;&lt;/article&gt;`).join(&quot;&quot;)}
+function like(b,n){let on=b.dataset.on===&quot;1&quot;;b.dataset.on=on?&quot;0&quot;:&quot;1&quot;;b.textContent=(on?&quot;♡ &quot;:&quot;♥ &quot;)+(n+(on?-1:1))}
+function follow(i){creators[i].followed=!creators[i].followed;feed();discover()}
+function discover(){let q=(document.getElementById(&quot;search&quot;)?.value||&quot;&quot;).toLowerCase();document.getElementById(&quot;discoverList&quot;).innerHTML=creators.filter(c=&gt;(c.name+c.handle+c.type).toLowerCase().includes(q)).map((c,i)=&gt;`&lt;div class=&quot;card&quot;&gt;&lt;div class=&quot;row between&quot;&gt;&lt;div class=&quot;user&quot;&gt;&lt;div class=&quot;avatar&quot;&gt;${c.name[0]}&lt;/div&gt;&lt;div&gt;&lt;b&gt;${c.name}&lt;/b&gt;&lt;small&gt;${c.handle} · ${c.type}&lt;/small&gt;&lt;/div&gt;&lt;/div&gt;&lt;button class=&quot;primary&quot; onclick=&quot;follow(${i})&quot;&gt;${c.followed?&quot;Following&quot;:&quot;Follow&quot;}&lt;/button&gt;&lt;/div&gt;&lt;/div&gt;`).join(&quot;&quot;)}
+function preview(e){let f=e.target.files[0];if(!f)return;let u=URL.createObjectURL(f);document.getElementById(&quot;preview&quot;).innerHTML=f.type.startsWith(&quot;video/&quot;)?`&lt;video src=&quot;${u}&quot; controls style=&quot;width:100%;max-height:300px&quot;&gt;&lt;/video&gt;`:`&lt;img src=&quot;${u}&quot; style=&quot;max-width:100%;max-height:300px;border-radius:12px&quot;&gt;`;document.getElementById(&quot;preview&quot;).dataset.url=u}
+function publish(){let text=document.getElementById(&quot;caption&quot;).value.trim()||&quot;My new Mirror Gram post!&quot;;creators.unshift({name:&quot;You&quot;,handle:&quot;@you&quot;,type:&quot;Creator&quot;,likes:0,followed:false,icon:&quot;✨&quot;,text:text,media:document.getElementById(&quot;preview&quot;).dataset.url||&quot;&quot;});alert(&quot;Demo post published locally.&quot;);feed();page(&quot;home&quot;)}
+function live(){alert(&quot;Demo live created: &quot;+(document.getElementById(&quot;liveTitle&quot;).value||&quot;My Mirror Gram Live&quot;))}
+function renderChats(){document.getElementById(&quot;chats&quot;).innerHTML=chats.map((c,i)=&gt;`&lt;button style=&quot;width:100%;padding:12px;border:0;border-bottom:1px solid var(--line);background:white;text-align:left&quot; onclick=&quot;openChat(${i})&quot;&gt;&lt;div class=&quot;user&quot;&gt;&lt;div class=&quot;avatar&quot;&gt;${c.name[0]}&lt;/div&gt;&lt;div&gt;&lt;b&gt;${c.name}&lt;/b&gt;&lt;small&gt;${c.m[c.m.length-1][1]}&lt;/small&gt;&lt;/div&gt;&lt;/div&gt;&lt;/button&gt;`).join(&quot;&quot;)}
+function openChat(i){current=i;document.getElementById(&quot;conversation&quot;).style.display=&quot;block&quot;;document.getElementById(&quot;chatName&quot;).textContent=chats[i].name;renderChat()}
+function closeChat(){current=-1;document.getElementById(&quot;conversation&quot;).style.display=&quot;none&quot;}
+function renderChat(){document.getElementById(&quot;chat&quot;).innerHTML=chats[current].m.map(x=&gt;`&lt;div class=&quot;bubble ${x[0]===&quot;mine&quot;?&quot;mine&quot;:&quot;theirs&quot;}&quot;&gt;${x[1]}&lt;/div&gt;`).join(&quot;&quot;);document.getElementById(&quot;chat&quot;).scrollTop=99999}
+function send(){let i=document.getElementById(&quot;msg&quot;),v=i.value.trim();if(!v||current&lt;0)return;chats[current].m.push([&quot;mine&quot;,v]);i.value=&quot;&quot;;renderChat()}
+feed();discover();
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre></details><details><summary>package.json</summary><pre>{
+  &quot;name&quot;: &quot;mirror-gram&quot;,
+  &quot;private&quot;: true,
+  &quot;scripts&quot;: {
+    &quot;dev:web&quot;: &quot;npm --prefix apps/web run dev&quot;,
+    &quot;build:web&quot;: &quot;npm --prefix apps/web run build&quot;,
+    &quot;start:web&quot;: &quot;npm --prefix apps/web run start&quot;,
+    &quot;typecheck:web&quot;: &quot;npm --prefix apps/web run typecheck&quot;
+  },
+  &quot;workspaces&quot;: [&quot;apps/web&quot;, &quot;apps/mobile&quot;, &quot;packages/shared&quot;]
+}</pre></details><details><summary>supabase/migrations/001_mirror_gram_v3_foundation.sql</summary><pre>-- Mirror Gram V3 foundation.
+-- This migration is already applied to the connected Supabase project.
+-- Keep this file as the reproducible source of the database design.
+
+create extension if not exists pgcrypto;
+
+create table public.profiles (
+  id uuid primary key references auth.users(id) on delete cascade,
+  username text not null unique check (char_length(username) between 3 and 30),
+  display_name text not null default &#x27;&#x27;,
+  bio text not null default &#x27;&#x27; check (char_length(bio) &lt;= 500),
+  avatar_path text,
+  creator_status text not null default &#x27;user&#x27;
+    check (creator_status in (&#x27;user&#x27;,&#x27;creator&#x27;,&#x27;verified&#x27;)),
+  is_private boolean not null default false,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table public.posts (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references public.profiles(id) on delete cascade,
+  caption text not null default &#x27;&#x27; check (char_length(caption) &lt;= 2200),
+  visibility text not null default &#x27;public&#x27;
+    check (visibility in (&#x27;public&#x27;,&#x27;followers&#x27;,&#x27;private&#x27;)),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table public.media (
+  id uuid primary key default gen_random_uuid(),
+  post_id uuid not null references public.posts(id) on delete cascade,
+  storage_path text not null,
+  media_type text not null check (media_type in (&#x27;image&#x27;,&#x27;video&#x27;)),
+  mime_type text,
+  width integer,
+  height integer,
+  duration_seconds numeric,
+  created_at timestamptz not null default now()
+);
+
+create table public.follows (
+  follower_id uuid not null references public.profiles(id) on delete cascade,
+  following_id uuid not null references public.profiles(id) on delete cascade,
+  created_at timestamptz not null default now(),
+  primary key (follower_id, following_id),
+  check (follower_id &lt;&gt; following_id)
+);
+
+create table public.likes (
+  user_id uuid not null references public.profiles(id) on delete cascade,
+  post_id uuid not null references public.posts(id) on delete cascade,
+  created_at timestamptz not null default now(),
+  primary key (user_id, post_id)
+);
+
+create table public.comments (
+  id uuid primary key default gen_random_uuid(),
+  post_id uuid not null references public.posts(id) on delete cascade,
+  user_id uuid not null references public.profiles(id) on delete cascade,
+  body text not null check (char_length(body) between 1 and 1000),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table public.saved_posts (
+  user_id uuid not null references public.profiles(id) on delete cascade,
+  post_id uuid not null references public.posts(id) on delete cascade,
+  created_at timestamptz not null default now(),
+  primary key (user_id, post_id)
+);
+
+create table public.blocks (
+  blocker_id uuid not null references public.profiles(id) on delete cascade,
+  blocked_id uuid not null references public.profiles(id) on delete cascade,
+  created_at timestamptz not null default now(),
+  primary key (blocker_id, blocked_id),
+  check (blocker_id &lt;&gt; blocked_id)
+);
+
+create table public.conversations (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now()
+);
+
+create table public.conversation_members (
+  conversation_id uuid not null references public.conversations(id) on delete cascade,
+  user_id uuid not null references public.profiles(id) on delete cascade,
+  joined_at timestamptz not null default now(),
+  primary key (conversation_id, user_id)
+);
+
+create table public.messages (
+  id uuid primary key default gen_random_uuid(),
+  conversation_id uuid not null references public.conversations(id) on delete cascade,
+  sender_id uuid not null references public.profiles(id) on delete cascade,
+  body text not null check (char_length(body) between 1 and 5000),
+  created_at timestamptz not null default now(),
+  deleted_at timestamptz
+);
+
+create table public.notifications (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references public.profiles(id) on delete cascade,
+  actor_id uuid references public.profiles(id) on delete set null,
+  type text not null check (type in (&#x27;like&#x27;,&#x27;comment&#x27;,&#x27;follow&#x27;,&#x27;message&#x27;,&#x27;live&#x27;,&#x27;system&#x27;)),
+  post_id uuid references public.posts(id) on delete cascade,
+  message text,
+  read_at timestamptz,
+  created_at timestamptz not null default now()
+);
+
+create table public.reports (
+  id uuid primary key default gen_random_uuid(),
+  reporter_id uuid not null references public.profiles(id) on delete cascade,
+  reported_user_id uuid references public.profiles(id) on delete set null,
+  post_id uuid references public.posts(id) on delete set null,
+  message_id uuid references public.messages(id) on delete set null,
+  reason text not null check (reason in (&#x27;spam&#x27;,&#x27;harassment&#x27;,&#x27;unsafe&#x27;,&#x27;privacy&#x27;,&#x27;impersonation&#x27;,&#x27;copyright&#x27;,&#x27;other&#x27;)),
+  details text check (details is null or char_length(details) &lt;= 2000),
+  status text not null default &#x27;open&#x27;
+    check (status in (&#x27;open&#x27;,&#x27;reviewing&#x27;,&#x27;resolved&#x27;,&#x27;dismissed&#x27;)),
+  created_at timestamptz not null default now()
+);
+
+create table public.live_streams (
+  id uuid primary key default gen_random_uuid(),
+  host_user_id uuid not null references public.profiles(id) on delete cascade,
+  title text not null default &#x27;&#x27; check (char_length(title) &lt;= 150),
+  category text not null default &#x27;general&#x27; check (char_length(category) &lt;= 80),
+  status text not null default &#x27;scheduled&#x27;
+    check (status in (&#x27;scheduled&#x27;,&#x27;live&#x27;,&#x27;ended&#x27;,&#x27;cancelled&#x27;)),
+  started_at timestamptz,
+  ended_at timestamptz,
+  created_at timestamptz not null default now()
+);
+
+create table public.public_events (
+  id uuid primary key default gen_random_uuid(),
+  creator_id uuid not null references public.profiles(id) on delete cascade,
+  title text not null check (char_length(title) between 1 and 150),
+  description text not null default &#x27;&#x27; check (char_length(description) &lt;= 2000),
+  area_name text not null default &#x27;&#x27;,
+  approximate_lat numeric(8,5),
+  approximate_lng numeric(8,5),
+  starts_at timestamptz,
+  ends_at timestamptz,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists posts_user_created_idx on public.posts(user_id, created_at desc);
+create index if not exists posts_created_idx on public.posts(created_at desc);
+create index if not exists media_post_idx on public.media(post_id);
+create index if not exists follows_following_idx on public.follows(following_id);
+create index if not exists follows_follower_idx on public.follows(follower_id);
+create index if not exists likes_post_idx on public.likes(post_id);
+create index if not exists comments_post_created_idx on public.comments(post_id, created_at desc);
+create index if not exists messages_conversation_created_idx on public.messages(conversation_id, created_at desc);
+create index if not exists notifications_user_created_idx on public.notifications(user_id, created_at desc);
+create index if not exists reports_status_created_idx on public.reports(status, created_at desc);
+create index if not exists live_streams_status_created_idx on public.live_streams(status, created_at desc);
+create index if not exists public_events_starts_idx on public.public_events(starts_at);
+
+create or replace function public.set_updated_at()
+returns trigger language plpgsql security invoker
+set search_path = public
+as $$
+begin
+  new.updated_at = now();
+  return new;
+end;
+$$;
+
+drop trigger if exists profiles_set_updated_at on public.profiles;
+drop trigger if exists posts_set_updated_at on public.posts;
+drop trigger if exists comments_set_updated_at on public.comments;
+
+create trigger profiles_set_updated_at before update on public.profiles
+for each row execute function public.set_updated_at();
+
+create trigger posts_set_updated_at before update on public.posts
+for each row execute function public.set_updated_at();
+
+create trigger comments_set_updated_at before update on public.comments
+for each row execute function public.set_updated_at();
+
+create or replace function public.handle_new_user()
+returns trigger language plpgsql security definer
+set search_path = public
+as $$
+begin
+  insert into public.profiles (id, username, display_name)
+  values (
+    new.id,
+    coalesce(nullif(new.raw_user_meta_data-&gt;&gt;&#x27;username&#x27;,&#x27;&#x27;),
+      &#x27;user_&#x27; || substr(replace(new.id::text,&#x27;-&#x27;,&#x27;&#x27;),1,10)),
+    coalesce(new.raw_user_meta_data-&gt;&gt;&#x27;display_name&#x27;,&#x27;&#x27;)
+  );
+  return new;
+end;
+$$;
+
+drop trigger if exists on_auth_user_created on auth.users;
+create trigger on_auth_user_created after insert on auth.users
+for each row execute function public.handle_new_user();
+
+create or replace function public.is_blocked(viewer uuid, other_user uuid)
+returns boolean
+language sql
+security definer
+set search_path = public
+stable
+as $$
+  select exists (
+    select 1 from public.blocks b
+    where (b.blocker_id = viewer and b.blocked_id = other_user)
+       or (b.blocker_id = other_user and b.blocked_id = viewer)
+  );
+$$;
+
+revoke all on function public.handle_new_user() from public, anon, authenticated;
+revoke all on function public.is_blocked(uuid, uuid) from public, anon, authenticated;
+
+alter table public.profiles enable row level security;
+alter table public.posts enable row level security;
+alter table public.media enable row level security;
+alter table public.follows enable row level security;
+alter table public.likes enable row level security;
+alter table public.comments enable row level security;
+alter table public.saved_posts enable row level security;
+alter table public.blocks enable row level security;
+alter table public.conversations enable row level security;
+alter table public.conversation_members enable row level security;
+alter table public.messages enable row level security;
+alter table public.notifications enable row level security;
+alter table public.reports enable row level security;
+alter table public.live_streams enable row level security;
+alter table public.public_events enable row level security;
+
+-- Policies are represented in the live Supabase project and should be kept
+-- in sync with the connected project&#x27;s migration history.
+
+insert into storage.buckets (id, name, public)
+values (&#x27;avatars&#x27;,&#x27;avatars&#x27;,false)
+on conflict (id) do nothing;
+
+insert into storage.buckets (id, name, public)
+values (&#x27;post-media&#x27;,&#x27;post-media&#x27;,false)
+on conflict (id) do nothing;
+</pre></details><details><summary>supabase/migrations/002_v3_1_security_realtime_notifications.sql</summary><pre>-- Mirror Gram V3.1: security, notifications, realtime, and private-media access.
+-- Applied to the connected Supabase project through the Supabase integration.
+</pre></details></main></body></html>

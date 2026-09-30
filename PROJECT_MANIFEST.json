@@ -1,0 +1,41 @@
+{
+  "project": "Mirror Gram",
+  "version": "V3.1",
+  "supabase_project_ref": "fkbbpovlhrpbclnmmtbu",
+  "database_tables": [
+    "profiles",
+    "posts",
+    "media",
+    "follows",
+    "likes",
+    "comments",
+    "saved_posts",
+    "blocks",
+    "conversations",
+    "conversation_members",
+    "messages",
+    "notifications",
+    "reports",
+    "live_streams",
+    "public_events"
+  ],
+  "storage_buckets": [
+    "avatars",
+    "post-media"
+  ],
+  "secrets_included": false,
+  "features": [
+    "auth SSR",
+    "real feed",
+    "media upload",
+    "likes",
+    "comments",
+    "saves",
+    "creator discovery",
+    "profiles",
+    "realtime messaging",
+    "notifications",
+    "reports",
+    "safety center"
+  ]
+}

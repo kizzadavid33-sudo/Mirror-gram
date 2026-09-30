@@ -1,0 +1,14 @@
+{
+  "expo": {
+    "name": "Mirror Gram",
+    "slug": "mirror-gram",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "plugins": [],
+    "extra": {
+      "supabaseUrl": "https://YOUR_PROJECT_REF.supabase.co",
+      "supabasePublishableKey": "sb_publishable_REPLACE_ME"
+    }
+  }
+}

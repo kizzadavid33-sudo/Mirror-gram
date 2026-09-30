@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mirror Gram — Creator Social</title>
+<style>
+  :root{
+    --green:#18a558;
+    --dark:#087f43;
+    --bg:#f5faf7;
+    --text:#15231c;
+    --muted:#718078;
+    --card:#fff;
+    --border:#dfe9e3;
+    --shadow:0 8px 30px rgba(8,127,67,.08);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--text)}
+  button,input,textarea{font:inherit}
+  button{cursor:pointer}
+  .app{min-height:100vh}
+  .topbar{
+    position:sticky;top:0;z-index:10;height:68px;background:#fff;
+    border-bottom:1px solid var(--border);display:flex;align-items:center;
+    justify-content:space-between;padding:0 28px
+  }
+  .logo{font-weight:900;font-size:23px;color:var(--green);letter-spacing:-1px}
+  .logo span{color:var(--text)}
+  .top-search{width:min(360px,38vw);background:var(--bg);border:1px solid var(--border);border-radius:22px;padding:10px 16px;outline:none}
+  .layout{display:flex;max-width:1250px;margin:auto}
+  .sidebar{
+    width:230px;padding:24px 14px;position:sticky;top:68px;height:calc(100vh - 68px)
+  }
+  .nav-btn{
+    width:100%;border:0;background:transparent;padding:13px 16px;margin:3px 0;
+    text-align:left;border-radius:12px;color:#435149;font-weight:650
+  }
+  .nav-btn:hover,.nav-btn.active{background:#e9f7ef;color:var(--dark)}
+  .nav-icon{display:inline-block;width:27px}
+  .main{flex:1;max-width:690px;padding:26px 18px}
+  .rightbar{width:270px;padding:26px 14px}
+  .page{display:none}.page.active{display:block}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:18px;box-shadow:var(--shadow)}
+  .stories{display:flex;gap:14px;overflow:auto;padding:15px}
+  .story{text-align:center;min-width:65px;font-size:12px}
+  .avatar{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;background:#dff4e7;color:var(--dark);font-weight:800;margin:auto auto 6px}
+  .avatar.big{width:92px;height:92px;font-size:27px}
+  .post{margin-top:18px;overflow:hidden}
+  .post-head{display:flex;align-items:center;gap:10px;padding:15px}
+  .post-meta{flex:1}.post-meta strong{display:block}.post-meta small{color:var(--muted)}
+  .more{border:0;background:none;font-size:22px}
+  .media{
+    height:390px;background:linear-gradient(135deg,#b8edcd,#3ebd78 50%,#087f43);
+    display:grid;place-items:center;color:white;font-size:72px;font-weight:900
+  }
+  .media.two{background:linear-gradient(135deg,#d7f3e2,#8bd7aa)}
+  .post-body{padding:12px 15px}
+  .actions{display:flex;gap:8px;margin-bottom:9px}
+  .action{border:0;background:none;font-size:16px;padding:7px 9px;border-radius:9px}
+  .action:hover{background:var(--bg)}
+  .like.liked{color:#e44767}
+  .caption{line-height:1.45}.caption b{margin-right:5px}
+  .comments{color:var(--muted);font-size:14px;margin-top:8px}
+  .suggestions{padding:17px}
+  .suggestions h3{margin:0 0 15px;font-size:16px}
+  .suggest{display:flex;align-items:center;gap:9px;margin:12px 0}
+  .suggest .avatar{margin:0;width:38px;height:38px;font-size:12px}
+  .follow{margin-left:auto;border:0;background:var(--green);color:white;padding:7px 10px;border-radius:9px;font-weight:700}
+  .hero{padding:28px;text-align:center}
+  .hero h1{font-size:31px;margin:10px 0 6px}.hero p{color:var(--muted)}
+  .profile{padding:25px}.profile-top{display:flex;gap:20px;align-items:center}.profile-info h2{margin:0 0 5px}.profile-info p{color:var(--muted);margin:5px 0}
+  .profile-stats{display:flex;gap:25px;margin-top:14px}.profile-stats b{display:block}.profile-stats span{color:var(--muted);font-size:13px}
+  .profile-actions{margin-top:18px;display:flex;gap:9px}.primary{border:0;background:var(--green);color:white;border-radius:10px;padding:10px 18px;font-weight:750}.secondary{border:1px solid var(--border);background:#fff;border-radius:10px;padding:10px 18px;font-weight:700}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:15px}.tile{aspect-ratio:1;background:#ccefd9;display:grid;place-items:center;font-size:35px;color:var(--dark);border-radius:5px}
+  .discover-search{width:100%;padding:13px 15px;border:1px solid var(--border);border-radius:12px;outline:none;margin-bottom:18px}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 20px}.chip{border:1px solid var(--border);background:white;border-radius:20px;padding:8px 13px}
+  .messages{overflow:hidden}.chat{display:flex;gap:12px;padding:15px;border-bottom:1px solid var(--border);align-items:center}.chat:hover{background:var(--bg)}.chat .avatar{margin:0}.chat-info{flex:1}.chat-info p{margin:4px 0 0;color:var(--muted);font-size:13px}
+  .compose{padding:18px}.compose label{display:block;font-weight:700;margin:13px 0 7px}.compose input,.compose textarea{width:100%;border:1px solid var(--border);border-radius:10px;padding:11px;outline:none}.compose textarea{min-height:100px;resize:vertical}.preview{height:180px;border-radius:12px;background:#e4f6eb;display:grid;place-items:center;color:var(--dark);font-weight:800;margin-bottom:10px}
+  .map{height:470px;border-radius:18px;overflow:hidden;background:#e8f5ec;position:relative;border:1px solid var(--border)}.road{position:absolute;height:18px;background:white;transform:rotate(-23deg);width:120%;left:-10%;top:48%}.road.r2{transform:rotate(38deg);top:28%}.pin{position:absolute;background:var(--green);color:#fff;border-radius:50% 50% 50% 0;width:35px;height:35px;transform:rotate(-45deg);display:grid;place-items:center}.pin span{transform:rotate(45deg);font-size:16px}.event-list{margin-top:15px}.event{padding:13px;border-bottom:1px solid var(--border)}
+  .live{padding:25px}.live-box{height:390px;background:linear-gradient(135deg,#14251c,#18a558);border-radius:15px;display:grid;place-items:center;color:white;text-align:center}.live-box .circle{width:90px;height:90px;border-radius:50%;background:white;color:var(--green);display:grid;place-items:center;font-size:28px;font-weight:900}
+  .badge{font-size:11px;background:#e3f7eb;color:var(--dark);padding:4px 7px;border-radius:10px;font-weight:800}
+  .mobile-nav{display:none}
+  @media(max-width:900px){.rightbar{display:none}.sidebar{width:200px}}
+  @media(max-width:700px){
+    .topbar{padding:0 15px}.top-search{display:none}.sidebar{display:none}.main{padding:15px 10px;padding-bottom:80px}.mobile-nav{position:fixed;display:flex;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--border);z-index:20;justify-content:space-around;padding:8px}.mobile-nav button{border:0;background:none;font-size:20px}.mobile-nav small{display:block;font-size:9px}.media{height:340px}.profile-top{align-items:flex-start}.avatar.big{width:75px;height:75px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="topbar">
+  <div class="logo">MIRROR <span>GRAM</span></div>
+  <input class="top-search" placeholder="Search creators, topics...">
+  <button class="action" onclick="showPage('notifications')">🔔</button>
+</header>
+
+<div class="layout">
+<aside class="sidebar">
+  <button class="nav-btn active" data-page="home" onclick="showPage('home')">🏠 <span class="nav-icon"></span>Home</button>
+  <button class="nav-btn" data-page="discover" onclick="showPage('discover')">🔎 <span class="nav-icon"></span>Discover</button>
+  <button class="nav-btn" data-page="create" onclick="showPage('create')">➕ <span class="nav-icon"></span>Create</button>
+  <button class="nav-btn" data-page="messages" onclick="showPage('messages')">💬 <span class="nav-icon"></span>Messages</button>
+  <button class="nav-btn" data-page="map" onclick="showPage('map')">🗺️ <span class="nav-icon"></span>Map</button>
+  <button class="nav-btn" data-page="profile" onclick="showPage('profile')">👤 <span class="nav-icon"></span>Profile</button>
+  <hr style="border:0;border-top:1px solid var(--border);margin:20px 8px">
+  <button class="nav-btn" onclick="alert('Creator Studio is coming in the next build.')">🎬 <span class="nav-icon"></span>Creator Studio</button>
+  <button class="nav-btn" onclick="alert('Safety Center will be connected to the moderation system in the full app.')">🛡️ <span class="nav-icon"></span>Safety Center</button>
+</aside>
+
+<main class="main">
+
+<section id="home" class="page active">
+  <div class="card stories">
+    <div class="story"><div class="avatar">MG</div>You</div>
+    <div class="story"><div class="avatar">AM</div>Amara</div>
+    <div class="story"><div class="avatar">JS</div>Jay</div>
+    <div class="story"><div class="avatar">SK</div>Sofia</div>
+    <div class="story"><div class="avatar">KD</div>Kai</div>
+  </div>
+
+  <article class="card post">
+    <div class="post-head"><div class="avatar" style="margin:0">AM</div><div class="post-meta"><strong>Amara Music <span class="badge">CREATOR</span></strong><small>@amara · 2h</small></div><button class="more">•••</button></div>
+    <div class="media">♪</div>
+    <div class="post-body">
+      <div class="actions">
+        <button class="action like" onclick="toggleLike(this)">♡ <span>1,284</span></button>
+        <button class="action">💬 86</button><button class="action">↗ Share</button><button class="action" style="margin-left:auto">🔖</button>
+      </div>
+      <div class="caption"><b>@amara</b> New music, new energy. Thanks for being part of the journey! 🌱</div>
+      <div class="comments">View all 86 comments</div>
+    </div>
+  </article>
+
+  <article class="card post">
+    <div class="post-head"><div class="avatar" style="margin:0">JS</div><div class="post-meta"><strong>Jay Creates</strong><small>@jaycreates · 5h</small></div><button class="more">•••</button></div>
+    <div class="media two">✦</div>
+    <div class="post-body"><div class="actions"><button class="action like" onclick="toggleLike(this)">♡ <span>642</span></button><button class="action">💬 31</button><button class="action">↗ Share</button></div><div class="caption"><b>@jaycreates</b> Behind the scenes from today's creative session.</div></div>
+  </article>
+</section>
+
+<section id="discover" class="page">
+  <div class="hero card"><h1>Discover</h1><p>Find creators, ideas and communities that inspire you.</p></div>
+  <br><input class="discover-search" placeholder="🔎 Search creators, topics, hashtags...">
+  <h3>Explore categories</h3>
+  <div class="chips"><button class="chip">🎵 Music</button><button class="chip">💃 Dance</button><button class="chip">🎮 Gaming</button><button class="chip">🎨 Art</button><button class="chip">😂 Comedy</button><button class="chip">⚽ Sports</button><button class="chip">🎭 Acting</button></div>
+  <h3>Creators to discover</h3>
+  <div class="card suggestions">
+    <div class="suggest"><div class="avatar">SK</div><div><b>Sofia K</b><small style="display:block;color:var(--muted)">Artist · 8.2K followers</small></div><button class="follow" onclick="follow(this)">Follow</button></div>
+    <div class="suggest"><div class="avatar">KD</div><div><b>Kai Digital</b><small style="display:block;color:var(--muted)">Creator · 12K followers</small></div><button class="follow" onclick="follow(this)">Follow</button></div>
+    <div class="suggest"><div class="avatar">LM</div><div><b>Lina M</b><small style="display:block;color:var(--muted)">Dance · 4.7K followers</small></div><button class="follow" onclick="follow(this)">Follow</button></div>
+  </div>
+</section>
+
+<section id="create" class="page">
+  <div class="card compose"><h2>Create a post</h2><div class="preview" id="preview">📷 Your media preview</div><label>Photo or video</label><input type="file" accept="image/*,video/*" onchange="previewMedia(event)"><label>Caption</label><textarea placeholder="Tell your story..."></textarea><label>Visibility</label><select style="width:100%;padding:11px;border:1px solid var(--border);border-radius:10px"><option>Everyone</option><option>Followers</option><option>Private</option></select><br><br><button class="primary" onclick="publishPost()">Publish post</button> <button class="secondary" onclick="showPage('home')">Cancel</button></div>
+  <br><div class="card live"><h2>🔴 Go Live</h2><p style="color:var(--muted)">Livestreaming will be connected to the secure live-video service in the next development phase.</p><button class="primary" onclick="alert('Live streaming is planned for a later build.')">Prepare Live</button></div>
+</section>
+
+<section id="messages" class="page">
+  <div class="card"><div style="padding:18px"><h2 style="margin:0">Messages</h2><input class="discover-search" style="margin-top:14px;margin-bottom:0" placeholder="🔎 Search messages..."></div>
+  <div class="messages">
+    <div class="chat" onclick="openChat('Amara Music')"><div class="avatar">AM</div><div class="chat-info"><b>Amara Music</b><p>Thanks! Let's talk about the collaboration.</p></div><small>2h</small></div>
+    <div class="chat" onclick="openChat('Jay Creates')"><div class="avatar">JS</div><div class="chat-info"><b>Jay Creates</b><p>Check out this new video!</p></div><small>5h</small></div>
+    <div class="chat" onclick="openChat('Sofia K')"><div class="avatar">SK</div><div class="chat-info"><b>Sofia K</b><p>Hey 👋</p></div><small>1d</small></div>
+  </div></div>
+</section>
+
+<section id="map" class="page">
+  <div class="hero card"><h1>Creator Map</h1><p>Discover public creator events and communities. Exact personal locations are never shown.</p></div><br>
+  <div class="map"><div class="road"></div><div class="road r2"></div><div class="pin" style="left:25%;top:30%"><span>🎤</span></div><div class="pin" style="left:65%;top:55%"><span>🎨</span></div><div class="pin" style="left:43%;top:72%"><span>⭐</span></div></div>
+  <div class="card event-list"><div class="event"><b>🎤 Community Music Session</b><br><small>Public event · Tomorrow</small></div><div class="event"><b>🎨 Young Creators Workshop</b><br><small>Public event · Saturday</small></div></div>
+</section>
+
+<section id="profile" class="page">
+  <div class="card profile"><div class="profile-top"><div class="avatar big">MG</div><div class="profile-info"><h2>Mirror Creator</h2><div>@mirrorcreator <span class="badge">CREATOR</span></div><p>Sharing creativity and building something positive. 🌱</p><div class="profile-stats"><div><b>24</b><span>Posts</span></div><div><b>1,248</b><span>Followers</span></div><div><b>318</b><span>Following</span></div></div></div></div><div class="profile-actions"><button class="primary">Edit profile</button><button class="secondary">Share profile</button></div></div>
+  <div class="grid"><div class="tile">♪</div><div class="tile">✦</div><div class="tile">★</div><div class="tile">🎨</div><div class="tile">🎬</div><div class="tile">🌱</div></div>
+</section>
+
+<section id="notifications" class="page">
+  <div class="card" style="padding:20px"><h2>Notifications</h2><p>❤️ Amara liked your post.</p><p>👤 Kai started following you.</p><p>💬 Jay commented on your video.</p><p>🏆 You reached 1,000 followers!</p></div>
+</section>
+
+</main>
+
+<aside class="rightbar">
+  <div class="card suggestions"><h3>Suggested creators</h3>
+    <div class="suggest"><div class="avatar">AM</div><div><b>Amara</b><small style="display:block;color:var(--muted)">Music</small></div><button class="follow" onclick="follow(this)">Follow</button></div>
+    <div class="suggest"><div class="avatar">JS</div><div><b>Jay</b><small style="display:block;color:var(--muted)">Creator</small></div><button class="follow" onclick="follow(this)">Follow</button></div>
+  </div>
+  <br>
+  <div class="card suggestions"><h3>🌱 Creator Journey</h3><p>🌱 Beginner</p><p>⭐ Rising Creator</p><p>🚀 Growing Creator</p><small style="color:var(--muted)">Milestones will unlock as your creator profile grows.</small></div>
+</aside>
+</div>
+
+<nav class="mobile-nav">
+  <button onclick="showPage('home')">🏠<small>Home</small></button>
+  <button onclick="showPage('discover')">🔎<small>Discover</small></button>
+  <button onclick="showPage('create')">➕<small>Create</small></button>
+  <button onclick="showPage('messages')">💬<small>Messages</small></button>
+  <button onclick="showPage('profile')">👤<small>Profile</small></button>
+</nav>
+</div>
+
+<script>
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  const page=document.getElementById(id); if(page) page.classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.page===id));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function toggleLike(btn){
+  const count=btn.querySelector('span'); let n=parseInt(count.textContent.replace(/,/g,''),10);
+  btn.classList.toggle('liked'); const liked=btn.classList.contains('liked');
+  count.textContent=(n+(liked?1:-1)).toLocaleString(); btn.firstChild.textContent=liked?'♥ ':'♡ ';
+}
+function follow(btn){btn.textContent=btn.textContent==='Follow'?'Following':'Follow';}
+function previewMedia(event){
+  const file=event.target.files[0], preview=document.getElementById('preview');
+  if(!file)return;
+  if(file.type.startsWith('image/')){
+    const url=URL.createObjectURL(file); preview.innerHTML='<img src="'+url+'" style="width:100%;height:100%;object-fit:cover;border-radius:12px">';
+  }else{preview.innerHTML='🎬 '+file.name;}
+}
+function publishPost(){
+  alert('Demo post published! The real version will upload your media to the Mirror Gram backend.');
+  showPage('home');
+}
+function openChat(name){alert('Opening chat with '+name+' — real-time messaging will be connected in the next backend phase.');}
+</script>
+</body>
+</html>
