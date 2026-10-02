@@ -1,6 +1,7 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useRef, useState, type ChangeEvent } from 'react'
+
 import { updateProfile } from './actions'
 
 type ProfileEditorProps = {
