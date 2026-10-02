@@ -28,7 +28,7 @@ export default function ProfileEditor({
   const coverInputRef = useRef<HTMLInputElement>(null)
 
   function handleAvatarChange(
-    event: React.ChangeEvent<HTMLInputElement>
+    event: ChangeEvent<HTMLInputElement>
   ) {
     const file = event.target.files?.[0]
 
