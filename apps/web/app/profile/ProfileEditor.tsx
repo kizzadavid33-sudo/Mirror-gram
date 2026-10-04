@@ -50,7 +50,7 @@ export default function ProfileEditor({
   }
 
   function handleCoverChange(
-    event: React.ChangeEvent<HTMLInputElement>
+    event: ChangeEvent<HTMLInputElement>
   ) {
     const file = event.target.files?.[0]
 
@@ -251,7 +251,7 @@ export default function ProfileEditor({
                   accept="image/jpeg,image/png,image/webp,image/gif"
                   name="avatar_photo"
                   onChange={handleAvatarChange}
-                  style={{ display: 'none' }}
+                  style={{ position: 'absolute', width: 1, height: 1, opacity: 0.01, pointerEvents: 'none' }}
                 />
               </div>
             </div>
