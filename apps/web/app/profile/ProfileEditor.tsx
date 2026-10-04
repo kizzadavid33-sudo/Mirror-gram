@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useState, type ChangeEvent } from 'react'
+import { useRef, type ChangeEvent } from 'react'
 
 import { updateProfile } from './actions'
 
@@ -21,7 +21,6 @@ export default function ProfileEditor({
   avatarUrl,
   coverUrl,
 }: ProfileEditorProps) {
-  const [open, setOpen] = useState(false)
   const [avatarPreview, setAvatarPreview] = useState(avatarUrl)
   const [coverPreview, setCoverPreview] = useState(coverUrl)
 
@@ -72,36 +71,7 @@ export default function ProfileEditor({
 
   return (
     <>
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'flex-end',
-          marginTop: -74,
-          position: 'relative',
-          zIndex: 2,
-          padding: '0 24px',
-        }}
-      >
-        <button
-          type="button"
-          onClick={() => setOpen((value) => !value)}
-          style={{
-            background: '#fff',
-            color: '#0878ed',
-            border: '1px solid #0878ed',
-            borderRadius: 12,
-            padding: '13px 25px',
-            fontWeight: 800,
-            fontSize: 16,
-            cursor: 'pointer',
-          }}
-        >
-          {open ? 'Close editor' : 'Edit profile'}
-        </button>
-      </div>
-
-      {open && (
-        <form
+      <form
           action={updateProfile}
           encType="multipart/form-data"
           style={{
@@ -305,7 +275,7 @@ export default function ProfileEditor({
                 accept="image/jpeg,image/png,image/webp,image/gif"
                 name="cover_photo"
                 onChange={handleCoverChange}
-                style={{ display: 'none' }}
+                style={{ position: 'absolute', width: 1, height: 1, opacity: 0.01, pointerEvents: 'none' }}
               />
             </div>
 
@@ -341,7 +311,6 @@ export default function ProfileEditor({
             </button>
           </div>
         </form>
-      )}
     </>
   )
-  }
+}
