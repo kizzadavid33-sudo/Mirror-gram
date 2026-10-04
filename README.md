@@ -1,6 +1,12 @@
 # Mirror Gram
 
-Blue-and-white creator-first social app foundation using Next.js, Expo/React Native, and Supabase.\n\n## Architecture\n- GitHub is the source of truth for the code and runs the web build checks through GitHub Actions.\n- Supabase provides authentication, database, storage, realtime, and the backend security layer.\n- Vercel is not required by this repository. There is no Vercel-specific build configuration.\n- A separate web hosting provider is still required to publish the Next.js web application publicly; removing Vercel does not turn Supabase into a Next.js host.
+Blue-and-white creator-first social app foundation using Next.js, Expo/React Native, and Supabase.
+
+## Architecture
+- GitHub is the source of truth for the code and runs the web build checks through GitHub Actions.
+- Supabase provides authentication, database, storage, realtime, and the backend security layer.
+- Vercel is not required by this repository. There is no Vercel-specific build configuration.
+- A separate web hosting provider is still required to publish the Next.js web application publicly; removing Vercel does not turn Supabase into a Next.js host.
 
 ## Included now
 - Branded Mirror Gram logo (the supplied logo is included in the web and mobile assets)
