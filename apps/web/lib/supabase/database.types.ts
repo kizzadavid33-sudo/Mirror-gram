@@ -7,9 +7,9 @@ export type Database = {
   public: {
     Tables: {
       profiles: {
-        Row: { id: string; username: string; display_name: string; bio: string; avatar_path: string | null; creator_status: string; is_private: boolean; created_at: string; updated_at: string }
-        Insert: { id: string; username: string; display_name?: string; bio?: string; avatar_path?: string | null; creator_status?: string; is_private?: boolean; created_at?: string; updated_at?: string }
-        Update: { id?: string; username?: string; display_name?: string; bio?: string; avatar_path?: string | null; creator_status?: string; is_private?: boolean; created_at?: string; updated_at?: string }
+        Row: { id: string; username: string; display_name: string; bio: string; avatar_path: string | null; cover_path: string | null; creator_status: string; is_private: boolean; created_at: string; updated_at: string }
+        Insert: { id: string; username: string; display_name?: string; bio?: string; avatar_path?: string | null; cover_path?: string | null; creator_status?: string; is_private?: boolean; created_at?: string; updated_at?: string }
+        Update: { id?: string; username?: string; display_name?: string; bio?: string; avatar_path?: string | null; cover_path?: string | null; creator_status?: string; is_private?: boolean; created_at?: string; updated_at?: string }
         Relationships: []
       }
       posts: {
