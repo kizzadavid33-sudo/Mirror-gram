@@ -20,3 +20,5 @@ export default async function HusiePage(){
   return {id:p.id,user_id:p.user_id,caption:p.caption,created_at:p.created_at,username:(p.profiles as any)?.username??'user',display_name:(p.profiles as any)?.display_name??'',mediaUrl:url,mediaType:m?.media_type??null,likeCount:(likes??[]).filter(x=>x.post_id===p.id).length,commentCount:(comments??[]).filter(x=>x.post_id===p.id).length,liked:(likes??[]).some(x=>x.post_id===p.id&&x.user_id===user.id),saved:(saved??[]).some(x=>x.post_id===p.id)}
  }))
  return <main className="shell narrow"><header className="topbar" style={{paddingLeft:0}}><div><h1>Husie</h1><p>The Mirror Gram video room.</p></div><div style={{display:'flex',gap:8,flexWrap:'wrap'}}><Link className="secondary" href="/">Home</Link><Link className="secondary" href="/map">Map & Events</Link><Link className="primary link-button" href="/create">Create video</Link></div></header>{view.length?view.map(p=><PostCard key={p.id} post={p}/>):<section className="card empty"><h2>No Husie videos yet</h2><p>Publish a video and it will appear here.</p><Link className="primary link-button" href="/create">Create a video</Link></section>}</main>
+
+}
