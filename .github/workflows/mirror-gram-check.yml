@@ -10,6 +10,9 @@ on:
 jobs:
   verify:
     runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: https://fkbbpovlhrpbclnmmtbu.supabase.co
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: sb_publishable_8leNijHqCZ2QQKzmKyysMQ_57tRVsGK
     steps:
       - name: Checkout Mirror Gram
         uses: actions/checkout@v4
