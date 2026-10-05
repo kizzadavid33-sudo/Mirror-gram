@@ -1,9 +1,9 @@
 'use client'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
 export default function FollowButton({ targetId, initialFollowing = false }: { targetId: string; initialFollowing?: boolean }) {
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
   const [following, setFollowing] = useState(initialFollowing)
   const [busy, setBusy] = useState(false)
 
