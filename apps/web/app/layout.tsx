@@ -1,6 +1,7 @@
 import './globals.css'
 import type { Metadata } from 'next'
 import MobileNav from './components/MobileNav'
+import { createClient } from '@/lib/supabase/server'
 
 export const metadata: Metadata = {
   title: 'Mirror Gram',
@@ -8,6 +9,8 @@ export const metadata: Metadata = {
   icons: { icon: '/mirror-gram-logo.jpg' },
 }
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return <html lang="en"><body>{children}<MobileNav /></body></html>
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  return <html lang="en"><body>{children}<MobileNav authenticated={!!user} /></body></html>
 }
