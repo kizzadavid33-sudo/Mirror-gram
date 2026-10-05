@@ -67,6 +67,8 @@ export async function updateProfile(formData: FormData) {
   const display_name = String(formData.get('display_name') || '').trim()
 
   const bio = String(formData.get('bio') || '').trim()
+  const creator_status = String(formData.get('creator_status') || 'user')
+  if (!['user', 'creator', 'verified'].includes(creator_status)) redirect('/profile?error=Invalid creator status')
 
   const is_private = formData.get('is_private') === 'on'
 
@@ -109,6 +111,7 @@ export async function updateProfile(formData: FormData) {
     username: string
     display_name: string
     bio: string
+    creator_status: 'user' | 'creator' | 'verified'
     is_private: boolean
     avatar_path?: string
     cover_path?: string
@@ -116,6 +119,7 @@ export async function updateProfile(formData: FormData) {
     username,
     display_name,
     bio,
+    creator_status: creator_status as 'user' | 'creator' | 'verified',
     is_private,
   }
 
