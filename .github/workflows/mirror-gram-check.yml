@@ -28,3 +28,16 @@ jobs:
         run: npm run typecheck:web
       - name: Build web app
         run: npm run build:web
+      - name: Package Mirror Gram
+        if: success()
+        run: |
+          zip -r Mirror_Gram_WHOLE_APP_SO_FAR.zip . \
+            -x ".git/*" "node_modules/*" "apps/web/node_modules/*" "apps/mobile/node_modules/*" ".next/*"
+
+      - name: Upload Mirror Gram ZIP
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Mirror_Gram_WHOLE_APP_SO_FAR
+          path: Mirror_Gram_WHOLE_APP_SO_FAR.zip
+          retention-days: 7
