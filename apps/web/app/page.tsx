@@ -76,7 +76,7 @@ export default async function HomePage() {
 
   return <main className="shell">
     <Nav username={profile?.username}/>
-    <header className="topbar"><div><h1>Your feed</h1><p>Share what you see. Reflect who you are.</p></div></header>
+    <header className="topbar"><div><h1>Your feed</h1><p>Share what you see. Reflect who you are.</p></div><div style={{display:"flex",gap:8,flexWrap:"wrap"}}><Link className="secondary" href="/husie">Husie 🎬</Link><Link className="secondary" href="/map">Map & Events 🗺️</Link></div></header>
     <div className="feed-layout">
       <section>
         <StoryBar initialStories={initialStories.filter((story: any) => story.mediaUrl)} />
