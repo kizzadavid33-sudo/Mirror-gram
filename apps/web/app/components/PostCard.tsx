@@ -1,13 +1,13 @@
 'use client'
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import FollowButton from './FollowButton'
 
 type Post = { id:string; user_id:string; caption:string; created_at:string; username:string; display_name:string; mediaUrl?:string|null; mediaType?:string|null; likeCount:number; commentCount:number; liked:boolean; saved:boolean }
 
 export default function PostCard({ post, canInteract = true }: { post:Post; canInteract?:boolean }) {
-  const supabase=createClient()
+  const supabase=useMemo(()=>createClient(),[])
   const [liked,setLiked]=useState(post.liked),[saved,setSaved]=useState(post.saved),[likes,setLikes]=useState(post.likeCount),[comment,setComment]=useState(''),[comments,setComments]=useState(post.commentCount),[busy,setBusy]=useState(false),[currentUserId,setCurrentUserId]=useState<string|null>(null)
 
   useEffect(()=>{supabase.auth.getUser().then(({data:{user}})=>setCurrentUserId(user?.id??null))},[supabase])
