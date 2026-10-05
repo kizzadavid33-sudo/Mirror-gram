@@ -2,6 +2,9 @@
   "name": "mirror-gram",
   "private": true,
   "scripts": {
+    "dev": "npm run dev:web",
+    "build": "npm run build:web",
+    "start": "npm run start:web",
     "dev:web": "npm run dev --workspace apps/web",
     "build:web": "npm run build --workspace apps/web",
     "start:web": "npm run start --workspace apps/web",
