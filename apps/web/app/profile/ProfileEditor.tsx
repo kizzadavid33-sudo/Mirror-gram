@@ -9,6 +9,7 @@ type ProfileEditorProps = {
   displayName: string
   bio: string
   isPrivate: boolean
+  creatorStatus: 'user' | 'creator' | 'verified'
   avatarUrl: string | null
   coverUrl: string | null
 }
@@ -18,6 +19,7 @@ export default function ProfileEditor({
   displayName,
   bio,
   isPrivate,
+  creatorStatus,
   avatarUrl,
   coverUrl,
 }: ProfileEditorProps) {
@@ -125,6 +127,19 @@ export default function ProfileEditor({
                   fontSize: 16,
                 }}
               />
+            </label>
+
+            <label>
+              <strong>Creator status</strong>
+              <select
+                name="creator_status"
+                defaultValue={creatorStatus}
+                style={{ width: '100%', marginTop: 6, padding: 12, border: '1px solid #cbd5e1', borderRadius: 10, boxSizing: 'border-box', fontSize: 16, background: '#fff', color: '#10213f' }}
+              >
+                <option value="user">User</option>
+                <option value="creator">Creator</option>
+                <option value="verified">Verified</option>
+              </select>
             </label>
 
             <label>
