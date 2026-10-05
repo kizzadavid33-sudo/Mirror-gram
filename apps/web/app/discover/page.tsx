@@ -19,7 +19,7 @@ export default async function DiscoverPage({ searchParams }: { searchParams: Pro
   return <main className="shell"><header className="topbar"><div><h1>Discover</h1><p>Find creators and communities.</p></div><Nav /></header>
     <form className="card searchbar" action="/discover" method="get">
       <input name="q" defaultValue={q} placeholder="Search usernames or names…" aria-label="Search usernames or names" />
-      <button type="submit" className="primary">Search</button>
+      <button type="submit" className="primary" aria-label="Search Mirror Gram">Search</button>
     </form>
     <section className="grid creators">{(profiles ?? []).map(p => <article className="card creator" key={p.id}><span className="badge">{p.creator_status}</span><h3>@{p.username}</h3><strong>{p.display_name}</strong><p>{p.bio || 'Creator on Mirror Gram.'}</p><div className="actions"><Link href={`/profile/${p.id}`}>View profile</Link><FollowButton targetId={p.id} initialFollowing={following.has(p.id)}/></div></article>)}</section>
     {q && !(profiles ?? []).length && <div className="card empty"><h3>No results found</h3><p>Try another username or display name.</p></div>}
