@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import ProfileEditor from './ProfileEditor'
+import PostCard from '../components/PostCard'
 
 type ProfilePageProps = {
   searchParams: Promise<{
@@ -35,6 +36,7 @@ export default async function ProfilePage({
   const username = profile?.username ?? 'username'
   const displayName = profile?.display_name ?? username
   const bio = profile?.bio ?? ''
+  const creatorStatus = profile?.creator_status ?? 'user'
   const initial = displayName.charAt(0).toUpperCase()
 
   let avatarUrl: string | null = null
@@ -104,6 +106,7 @@ export default async function ProfilePage({
             displayName={displayName}
             bio={bio}
             isPrivate={profile?.is_private ?? false}
+            creatorStatus={creatorStatus}
             avatarUrl={avatarUrl}
             coverUrl={coverUrl}
           />
@@ -281,21 +284,13 @@ export default async function ProfilePage({
         <section style={{ padding: '0 24px 40px' }}>
           <h2 style={{ color: '#071b41' }}>Your posts</h2>
 
-          <div
-            style={{
-              textAlign: 'center',
-              padding: '50px 20px',
-              border: '1px dashed #cbd5e1',
-              borderRadius: 16,
-              color: '#64748b',
-            }}
-          >
-            <div style={{ fontSize: 42 }}>📸</div>
-
-            <strong>No posts yet</strong>
-
-            <p>Create your first Mirror Gram post.</p>
-          </div>
+          {viewPosts.length ? viewPosts.map(post => <PostCard key={post.id} post={post} />) : (
+            <div style={{ textAlign: 'center', padding: '50px 20px', border: '1px dashed #cbd5e1', borderRadius: 16, color: '#64748b' }}>
+              <div style={{ fontSize: 42 }}>📸</div>
+              <strong>No posts yet</strong>
+              <p>Create your first Mirror Gram post.</p>
+            </div>
+          )}
         </section>
       </div>
     </main>
