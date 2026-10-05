@@ -32,7 +32,7 @@ export default function StoryBar({ initialStories }: { initialStories: Story[] }
       const {data:{user}}=await supabase.auth.getUser(); if(!user)throw new Error('Please log in again before posting a story.')
       const storyId=crypto.randomUUID(); const ext=file.name.split('.').pop()?.toLowerCase()||'bin'; const path=user.id+'/'+storyId+'/story.'+ext
       const upload=await supabase.storage.from('stories').upload(path,file,{contentType:file.type,upsert:false}); if(upload.error)throw upload.error
-      const inserted=await supabase.from('stories').insert({id:storyId,user_id:user.id,storage_path:path,media_type:file.type.startsWith('video/')?'video':'image',caption:''}).select('id').single()
+      const inserted=await (supabase as any).from('stories').insert({id:storyId,user_id:user.id,storage_path:path,media_type:file.type.startsWith('video/')?'video':'image',caption:''}).select('id').single()
       if(inserted.error){await supabase.storage.from('stories').remove([path]);throw inserted.error}
       await loadStories()
     }catch(e){setError(e instanceof Error?e.message:'Story could not be published.')}
