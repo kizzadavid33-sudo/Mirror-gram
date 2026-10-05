@@ -5,7 +5,7 @@ import Brand from './Brand'
 
 const links = [
   ['/', '⌂', 'Home'], ['/discover', '⌕', 'Discover'], ['/create', '＋', 'Create'], ['/messages', '◌', 'Messages'],
-  ['/notifications', '♧', 'Notifications'], ['/profile', '♙', 'Profile'], ['/studio', '✦', 'Creator Studio'],
+  ['/notifications', '♧', 'Notifications'], ['/settings', '⚙', 'Settings'], ['/profile', '♙', 'Profile'], ['/studio', '✦', 'Creator Studio'],
   ['/map', '⌖', 'Map & Events'], ['/live', '◉', 'Live'], ['/safety', '◇', 'Safety'],
 ]
 export default function Nav({ username }: { username?: string | null }) {
