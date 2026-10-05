@@ -11,9 +11,9 @@ export default function StoryBar({ initialStories }: { initialStories: Story[] }
 
   async function loadStories(){
     const {data:{user}}=await supabase.auth.getUser(); if(!user)return
-    const {data,error}=await supabase.from('stories').select('id,user_id,storage_path,media_type,profiles(username,display_name)').gt('expires_at',new Date().toISOString()).order('created_at',{ascending:false}).limit(30)
+    const {data,error}=await supabase.from('stories').select('id,user_id,storage_path,media_type,created_at,profiles!stories_user_id_fkey(username,display_name)').gt('expires_at',new Date().toISOString()).order('created_at',{ascending:false}).limit(30)
     if(error)return
-    const next=await Promise.all((data??[]).map(async (row:any)=>{
+    const rowsByUser=new Map<string,any>(); for(const row of (data??[])){ if(!rowsByUser.has(row.user_id)) rowsByUser.set(row.user_id,row) } const next=await Promise.all(Array.from(rowsByUser.values()).map(async (row:any)=>{
       const signed=await supabase.storage.from('stories').createSignedUrl(row.storage_path,86400)
       if(!signed.data?.signedUrl)return null
       return {id:row.id,user_id:row.user_id,username:row.user_id===user.id?'you':(row.profiles?.username??'user'),display_name:row.user_id===user.id?'Your Story':(row.profiles?.display_name??''),mediaUrl:signed.data.signedUrl,mediaType:row.media_type}
