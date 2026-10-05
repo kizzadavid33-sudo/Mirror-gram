@@ -33,16 +33,17 @@ export default function StoryBar({ initialStories }: { initialStories: Story[] }
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
 
-    const { data, error } = await supabase
+    const storyQuery = (supabase as any)
       .from('stories')
       .select('id,user_id,storage_path,media_type,created_at,profiles!stories_user_id_fkey(username,display_name)')
       .gt('expires_at', new Date().toISOString())
       .order('created_at', { ascending: false })
       .limit(30)
 
+    const { data, error } = await storyQuery
     if (error) return
 
-    const rows = (data ?? []) as unknown as StoryRow[]
+    const rows = (data ?? []) as StoryRow[]
     const rowsByUser = new Map<string, StoryRow>()
 
     for (const row of rows) {
