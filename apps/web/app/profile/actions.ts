@@ -101,3 +101,10 @@ export async function updateProfile(formData: FormData) {
   revalidatePath('/profile')
   redirect('/profile?saved=1')
 }
+
+export async function signOut() {
+  const supabase = await createClient()
+  await supabase.auth.signOut()
+  revalidatePath('/', 'layout')
+  redirect('/login')
+}
