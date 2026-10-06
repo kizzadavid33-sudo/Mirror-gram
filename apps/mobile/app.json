@@ -5,10 +5,14 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "light",
+    "android": {
+      "package": "com.mirrorgram.app",
+      "versionCode": 1
+    },
     "plugins": [],
     "extra": {
-      "supabaseUrl": "https://YOUR_PROJECT_REF.supabase.co",
-      "supabasePublishableKey": "sb_publishable_REPLACE_ME"
+      "supabaseUrl": "https://fkbbpovlhrpbclnmmtbu.supabase.co",
+      "supabasePublishableKey": "sb_publishable_8leNijHqCZ2QQKzmKyysMQ_57tRVsGK"
     }
   }
 }
