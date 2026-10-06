@@ -11,7 +11,7 @@ export default async function SettingsPage() {
     <div className="settings-page">
       <Link href="/profile" className="back-link">← Profile</Link>
       <h1>Settings</h1><p className="muted">Manage your Mirror Gram account and safety choices.</p>
-      <section className="card settings-list">
+      <section className="card settings-list"><p className="settings-intro">Your settings help you control your identity, privacy, safety, notifications and how you use Mirror Gram.</p>
         <Link href="/profile?edit=1"><strong>Edit profile</strong><span>Change your name, bio, photos and privacy.</span></Link>
         <Link href="/privacy"><strong>Privacy & Security</strong><span>Understand your profile, posts, messages and account protection.</span></Link>
         <Link href="/community-guidelines"><strong>Community Guidelines</strong><span>Learn what is welcome and what is not allowed.</span></Link>
