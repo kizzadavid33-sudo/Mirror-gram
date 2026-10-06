@@ -2,13 +2,13 @@
   "expo": {
     "name": "Mirror Gram",
     "slug": "mirror-gram",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "userInterfaceStyle": "light",
     "icon": "./assets/mirror-gram-icon.png",
     "android": {
       "package": "com.mirrorgram.app",
-      "versionCode": 3,
+      "versionCode": 4,
       "adaptiveIcon": {
         "foregroundImage": "./assets/mirror-gram-icon.png",
         "backgroundColor": "#0878ED"
