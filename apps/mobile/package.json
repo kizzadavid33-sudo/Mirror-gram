@@ -8,11 +8,11 @@
     "web": "expo start --web"
   },
   "dependencies": {
-    "@supabase/supabase-js": "latest",
-    "expo": "latest",
-    "expo-status-bar": "latest",
-    "react": "latest",
-    "react-native": "latest",
-    "react-native-webview": "latest"
+    "@supabase/supabase-js": "2.57.0",
+    "expo": "56.0.0",
+    "expo-status-bar": "~56.0.4",
+    "react": "19.2.3",
+    "react-native": "0.85.0",
+    "react-native-webview": "13.16.1"
   }
 }
