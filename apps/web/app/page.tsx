@@ -40,6 +40,10 @@ export default async function HomePage() {
 
   const initialStories = await Promise.all((rawStories ?? []).map(async (story: any) => {
     const signed = await supabase.storage.from('stories').createSignedUrl(story.storage_path, 86400)
+    const [{ data: storyLikes }, { count: storyComments }] = await Promise.all([
+      supabase.from('story_likes').select('user_id').eq('story_id', story.id),
+      supabase.from('story_comments').select('*', { count: 'exact', head: true }).eq('story_id', story.id),
+    ])
     return {
       id: story.id,
       user_id: story.user_id,
@@ -47,6 +51,9 @@ export default async function HomePage() {
       display_name: story.user_id === user.id ? 'Your Story' : (story.profiles?.display_name ?? ''),
       mediaUrl: signed.data?.signedUrl ?? '',
       mediaType: story.media_type,
+      likeCount: storyLikes?.length ?? 0,
+      liked: (storyLikes ?? []).some((x: any) => x.user_id === user.id),
+      commentCount: storyComments ?? 0,
     }
   }))
 
@@ -76,7 +83,7 @@ export default async function HomePage() {
 
   return <main className="shell">
     <Nav username={profile?.username}/>
-    <header className="topbar"><div><h1>Your feed</h1><p>Share what you see. Reflect who you are.</p></div><div style={{display:"flex",gap:8,flexWrap:"wrap"}}><Link className="secondary" href="/husie">Husie 🎬</Link><Link className="secondary" href="/map">Map & Events 🗺️</Link></div></header>
+    <header className="home-blue-band"><div style={{display:"flex",alignItems:"center",justifyContent:"space-between",gap:16,flexWrap:"wrap"}}><div><h1>Your feed</h1><p>Share what you see. Reflect who you are.</p></div><div style={{display:"flex",gap:8,flexWrap:"wrap"}}><Link className="secondary" href="/husie">Husie 🎬</Link><Link className="secondary" href="/map">Map & Events 🗺️</Link></div></div></header>
     <div className="feed-layout">
       <section>
         <StoryBar initialStories={initialStories.filter((story: any) => story.mediaUrl)} />
