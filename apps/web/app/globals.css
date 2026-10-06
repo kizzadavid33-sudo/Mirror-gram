@@ -38,3 +38,7 @@
 .language-check{min-width:24px;color:#0878ed;font-weight:800;font-size:20px}
 .language-saved{margin:12px 2px 0;color:#0878ed;font-weight:600}
 .language-note{margin-top:14px;font-size:13px}
+
+
+.auth-language{display:flex;align-items:center;justify-content:center;margin:16px auto 0;padding:10px 14px;border:1px solid #d7e5f5;border-radius:10px;color:#075fba;background:#f4f9ff;font-weight:700;text-decoration:none}
+.auth-language:hover{background:#eaf4ff}
