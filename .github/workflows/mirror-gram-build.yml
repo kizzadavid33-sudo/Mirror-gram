@@ -28,3 +28,16 @@ jobs:
 
       - name: Build web
         run: npm run build:web
+
+      - name: Package whole Mirror Gram app
+        if: success()
+        run: |
+          zip -r Mirror_Gram_WHOLE_APP_FINAL.zip .             -x ".git/*" "node_modules/*" "apps/web/node_modules/*" "apps/mobile/node_modules/*" "apps/web/.next/*" ".next/*"
+
+      - name: Upload whole-app ZIP
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Mirror_Gram_WHOLE_APP_FINAL
+          path: Mirror_Gram_WHOLE_APP_FINAL.zip
+          retention-days: 14
