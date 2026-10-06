@@ -8,7 +8,7 @@
     "icon": "./assets/mirror-gram-icon.png",
     "android": {
       "package": "com.mirrorgram.app",
-      "versionCode": 2,
+      "versionCode": 3,
       "adaptiveIcon": {
         "foregroundImage": "./assets/mirror-gram-icon.png",
         "backgroundColor": "#0878ED"
