@@ -4,6 +4,7 @@ import { WebView } from 'react-native-webview'
 
 const MIRROR_GRAM_URL = 'https://mirror-gram.vercel.app'
 
+// Final APK shell: always opens the canonical Mirror Gram production URL.
 export default function App() {
   return (
     <>
