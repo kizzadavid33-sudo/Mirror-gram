@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { login, signup } from './actions'
 
 type LoginPageProps = { searchParams: Promise<{ error?: string; message?: string }> }
@@ -29,6 +30,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
             <button type="submit" className="secondary auth-submit">Create account</button>
           </form>
           <p className="auth-note">Use a username people can easily find you by.</p>
+          <Link href="/language" className="auth-language">🌐 Language</Link>
         </section>
       </div>
     </div>
