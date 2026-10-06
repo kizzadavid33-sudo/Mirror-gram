@@ -8,6 +8,10 @@ type ProfileEditorProps = {
   username: string
   displayName: string
   bio: string
+  bioLink: string
+  contactEmail: string
+  contactPhone: string
+  contactOther: string
   isPrivate: boolean
   creatorStatus: 'user' | 'creator' | 'verified'
   avatarUrl: string | null
@@ -18,6 +22,10 @@ export default function ProfileEditor({
   username,
   displayName,
   bio,
+  bioLink,
+  contactEmail,
+  contactPhone,
+  contactOther,
   isPrivate,
   creatorStatus,
   avatarUrl,
@@ -162,6 +170,16 @@ export default function ProfileEditor({
                 }}
               />
             </label>
+
+            <div style={{border:'1px solid #dbe4ee',borderRadius:14,padding:16,background:'#fff'}}>
+              <strong>Links & contact</strong>
+              <div style={{display:'grid',gap:12,marginTop:12}}>
+                <label><strong>Link in bio</strong><input name="bio_link" type="url" defaultValue={bioLink} placeholder="https://yourwebsite.com" maxLength={500} style={{width:'100%',marginTop:6,padding:12,border:'1px solid #cbd5e1',borderRadius:10,boxSizing:'border-box',fontSize:16}}/></label>
+                <label><strong>Email</strong><input name="contact_email" type="email" defaultValue={contactEmail} placeholder="you@example.com" maxLength={200} style={{width:'100%',marginTop:6,padding:12,border:'1px solid #cbd5e1',borderRadius:10,boxSizing:'border-box',fontSize:16}}/></label>
+                <label><strong>Phone</strong><input name="contact_phone" type="tel" defaultValue={contactPhone} placeholder="+256..." maxLength={50} style={{width:'100%',marginTop:6,padding:12,border:'1px solid #cbd5e1',borderRadius:10,boxSizing:'border-box',fontSize:16}}/></label>
+                <label><strong>Other contact</strong><input name="contact_other" defaultValue={contactOther} placeholder="WhatsApp, Telegram, etc." maxLength={200} style={{width:'100%',marginTop:6,padding:12,border:'1px solid #cbd5e1',borderRadius:10,boxSizing:'border-box',fontSize:16}}/></label>
+              </div>
+            </div>
 
             <div
               style={{
