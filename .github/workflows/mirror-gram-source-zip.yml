@@ -6,6 +6,7 @@ on:
     branches: [main]
     paths:
       - ".github/workflows/mirror-gram-source-zip.yml"
+      - "apps/**"
 
 permissions:
   contents: read
