@@ -10,7 +10,7 @@ export default async function DiscoverPage({ searchParams }: { searchParams: Pro
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return <main className="shell"><Link href="/login">Log in</Link></main>
   const q = ((await searchParams).q ?? '').trim().toLowerCase()
-  let query = supabase.from('profiles').select('id,username,display_name,bio,creator_status,is_private').neq('id', user.id).order('created_at', { ascending: false }).limit(30)
+  let query = supabase.from('profiles').select('id,username,display_name,bio,creator_status,is_private,avatar_path').neq('id', user.id).order('created_at', { ascending: false }).limit(30)
   if (q) query = query.or(`username.ilike.%${q}%,display_name.ilike.%${q}%`)
   const { data: profiles } = await query
   const ids = (profiles ?? []).map(p => p.id)
