@@ -46,6 +46,10 @@ export async function updateProfile(formData: FormData) {
   const username = String(formData.get('username') || '').trim().toLowerCase()
   const display_name = String(formData.get('display_name') || '').trim()
   const bio = String(formData.get('bio') || '').trim()
+  const bio_link = String(formData.get('bio_link') || '').trim()
+  const contact_email = String(formData.get('contact_email') || '').trim()
+  const contact_phone = String(formData.get('contact_phone') || '').trim()
+  const contact_other = String(formData.get('contact_other') || '').trim()
   const creator_status = String(formData.get('creator_status') || 'user')
 
   if (!['user', 'creator', 'verified'].includes(creator_status)) {
@@ -53,6 +57,8 @@ export async function updateProfile(formData: FormData) {
   }
 
   const is_private = formData.get('is_private') === 'on'
+  if (bio_link && !/^https?:\/\//i.test(bio_link)) redirect('/profile?error=Link must start with https:// or http://')
+  if (contact_email && !/^\S+@\S+\.\S+$/.test(contact_email)) redirect('/profile?error=Invalid contact email')
 
   if (!/^[a-z0-9_]{3,30}$/.test(username)) {
     redirect('/profile?error=Invalid username')
@@ -79,6 +85,10 @@ export async function updateProfile(formData: FormData) {
     username: string
     display_name: string
     bio: string
+    bio_link: string
+    contact_email: string
+    contact_phone: string
+    contact_other: string
     creator_status: 'user' | 'creator' | 'verified'
     is_private: boolean
     avatar_path?: string
@@ -87,6 +97,10 @@ export async function updateProfile(formData: FormData) {
     username,
     display_name,
     bio,
+    bio_link,
+    contact_email,
+    contact_phone,
+    contact_other,
     creator_status: creator_status as 'user' | 'creator' | 'verified',
     is_private,
   }
