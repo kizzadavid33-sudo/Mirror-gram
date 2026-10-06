@@ -26,3 +26,15 @@
 
 /* Feed post layout: caption above media; engagement/comments remain below. */
 .post .post-caption{margin:0 0 12px;padding:0 2px;font-size:15px;line-height:1.55}.post .post-media{display:block;width:100%;margin:0;border-radius:14px}.post .post-body{padding-top:12px}.post .post-body>p{margin:0}
+
+
+.language-list{overflow:hidden}
+.language-option{width:100%;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 18px;background:#fff;border:0;border-bottom:1px solid #e8eef7;text-align:left;cursor:pointer;color:inherit}
+.language-option:last-child{border-bottom:0}
+.language-option:hover{background:#f5f9ff}
+.language-option.selected{background:#eef6ff}
+.language-option strong{display:block;font-size:16px}
+.language-option small{display:block;margin-top:3px;color:#6b7280;font-size:13px}
+.language-check{min-width:24px;color:#0878ed;font-weight:800;font-size:20px}
+.language-saved{margin:12px 2px 0;color:#0878ed;font-weight:600}
+.language-note{margin-top:14px;font-size:13px}
