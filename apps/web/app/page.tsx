@@ -20,9 +20,27 @@ export default async function HomePage() {
     .from('posts')
     .select('id,user_id,caption,created_at,profiles!posts_user_id_fkey(username,display_name,avatar_path),media!media_post_id_fkey(id,storage_path,media_type)')
     .order('created_at', { ascending: false })
-    .limit(20)
+    .limit(60)
 
-  const postIds = (posts ?? []).map(p => p.id)
+  // Mix accounts so one creator's posting burst does not fill the whole feed.
+  // Each creator keeps newest-first ordering, then posts are interleaved round-robin.
+  const grouped = new Map<string, any[]>()
+  for (const post of (posts ?? [])) {
+    const list = grouped.get(post.user_id) ?? []
+    list.push(post)
+    grouped.set(post.user_id, list)
+  }
+  const queues = Array.from(grouped.values())
+  const mixedPosts: any[] = []
+  let round = 0
+  while (mixedPosts.length < 30 && queues.some(q => q.length)) {
+    for (const queue of queues) {
+      if (queue.length && mixedPosts.length < 30) mixedPosts.push(queue.shift())
+    }
+    round++
+  }
+
+  const postIds = mixedPosts.map(p => p.id)
 
   const [{ data: likes }, { data: comments }, { data: saved }] = await Promise.all([
     postIds.length ? supabase.from('likes').select('post_id,user_id').in('post_id', postIds) : Promise.resolve({ data: [] as any[] }),
@@ -58,7 +76,7 @@ export default async function HomePage() {
     }
   }))
 
-  const viewPosts = await Promise.all((posts ?? []).map(async p => {
+  const viewPosts = await Promise.all(mixedPosts.map(async p => {
     const m = p.media?.[0]
     let url = null
     if (m) {
@@ -75,6 +93,7 @@ export default async function HomePage() {
       display_name: (p.profiles as any)?.display_name ?? '',
       mediaUrl: url,
       mediaType: m?.media_type ?? null,
+      avatarUrl: (p.profiles as any)?.avatar_path ? ((await supabase.storage.from('avatars').createSignedUrl((p.profiles as any).avatar_path, 3600)).data?.signedUrl ?? null) : null,
       likeCount: (likes ?? []).filter(x => x.post_id === p.id).length,
       commentCount: (comments ?? []).filter(x => x.post_id === p.id).length,
       liked: (likes ?? []).some(x => x.post_id === p.id && x.user_id === user.id),
