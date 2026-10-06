@@ -33,7 +33,7 @@ export default async function HomePage() {
   const db = supabase as any
   const { data: rawStories } = await db
     .from('stories')
-    .select('id,user_id,storage_path,media_type,profiles!stories_user_id_fkey(username,display_name)')
+    .select('id,user_id,storage_path,media_type,profiles!stories_user_id_fkey(username,display_name,avatar_path)')
     .gt('expires_at', new Date().toISOString())
     .order('created_at', { ascending: false })
     .limit(30)
@@ -49,6 +49,7 @@ export default async function HomePage() {
       user_id: story.user_id,
       username: story.user_id === user.id ? 'you' : (story.profiles?.username ?? 'user'),
       display_name: story.user_id === user.id ? 'Your Story' : (story.profiles?.display_name ?? ''),
+      avatarUrl: story.profiles?.avatar_path ? ((await supabase.storage.from('avatars').createSignedUrl(story.profiles.avatar_path, 3600)).data?.signedUrl ?? null) : null,
       mediaUrl: signed.data?.signedUrl ?? '',
       mediaType: story.media_type,
       likeCount: storyLikes?.length ?? 0,
