@@ -75,3 +75,10 @@
 .husie-empty{min-height:100vh;background:#000;display:grid;place-items:center;text-align:center;padding:30px;color:#fff}
 .husie-empty p{color:#aaa}
 @media(max-width:600px){.husie-caption{left:14px;right:76px;bottom:24px}.husie-actions{right:9px;bottom:22px;gap:10px}.husie-actions button,.husie-actions a{width:48px;min-height:48px}.husie-reel{min-height:100vh}}
+
+/* Prevent feed videos from collapsing while metadata loads. Reserve a full video frame immediately. */
+.post .post-media-gallery .post-media,
+.post > .post-media{background:#000;}
+.post > video.post-media{width:100%;height:auto;aspect-ratio:16 / 9;max-height:none;object-fit:contain;}
+.post-media-gallery .post-media{width:100%;height:auto;aspect-ratio:1 / 1;object-fit:cover;}
+@media(max-width:900px){.post > video.post-media{aspect-ratio:16 / 9;max-height:70vh;}}
