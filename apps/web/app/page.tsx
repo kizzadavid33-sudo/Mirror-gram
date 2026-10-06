@@ -18,7 +18,7 @@ export default async function HomePage() {
 
   const { data: posts, error: postsError } = await supabase
     .from('posts')
-    .select('id,user_id,caption,created_at,profiles!posts_user_id_fkey(username,display_name),media!media_post_id_fkey(id,storage_path,media_type)')
+    .select('id,user_id,caption,created_at,profiles!posts_user_id_fkey(username,display_name,avatar_path),media!media_post_id_fkey(id,storage_path,media_type)')
     .order('created_at', { ascending: false })
     .limit(20)
 
