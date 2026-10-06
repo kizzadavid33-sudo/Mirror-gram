@@ -1,0 +1,36 @@
+name: Mirror Gram Source ZIP
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/mirror-gram-source-zip.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Mirror Gram
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Create complete project ZIP
+        run: |
+          zip -qr Mirror_Gram_Upgrade_Complete.zip . \
+            -x ".git/*" \
+            -x "node_modules/*" \
+            -x "apps/mobile/android/*" \
+            -x "apps/web/.next/*" \
+            -x "Mirror_Gram_Upgrade_Complete.zip"
+
+      - name: Upload project ZIP
+        uses: actions/upload-artifact@v4
+        with:
+          name: Mirror_Gram_Upgrade_Complete
+          path: Mirror_Gram_Upgrade_Complete.zip
+          retention-days: 14
