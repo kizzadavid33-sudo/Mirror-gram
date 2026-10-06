@@ -44,11 +44,11 @@ jobs:
           retention-days: 14
 
       - name: Publish APK to GitHub Release
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          TAG="mirror-gram-apk-${{ github.run_number }}"
-          gh release create "$TAG" \
-            "apps/mobile/android/app/build/outputs/apk/debug/app-debug.apk#Mirror Gram APK" \
-            --title "Mirror Gram APK ${{ github.run_number }}" \
-            --notes "Mirror Gram Android APK built from commit ${{ github.sha }}."
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: mirror-gram-apk-${{ github.run_number }}
+          name: Mirror Gram APK ${{ github.run_number }}
+          body: |
+            Mirror Gram Android APK built from commit ${{ github.sha }}.
+          files: apps/mobile/android/app/build/outputs/apk/debug/app-debug.apk
+          make_latest: true
