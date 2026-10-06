@@ -39,7 +39,7 @@ export default async function PublicProfile({params}:{params:Promise<{id:string}
       <h1>@{p.username}</h1>
       <h2>{p.display_name}</h2>
       <span className="badge">{p.creator_status}</span>
-      <p>{p.bio||'Creator on Mirror Gram.'}</p>
+      <p>{p.bio||'Creator on Mirror Gram.'}</p>{p.bio_link&&<a href={p.bio_link} target="_blank" rel="noreferrer" style={{display:'inline-block',marginTop:6,color:'#0878ed',fontWeight:700}}>{p.bio_link.replace(/^https?:\/\//,'')}</a>}{(p.contact_email||p.contact_phone||p.contact_other)&&<div style={{marginTop:10,padding:10,border:'1px solid #e2e8f0',borderRadius:10,background:'#f8fbff'}}><strong>Contact</strong><div style={{marginTop:5,display:'grid',gap:3}}>{p.contact_email&&<span>✉️ {p.contact_email}</span>}{p.contact_phone&&<span>📞 {p.contact_phone}</span>}{p.contact_other&&<span>💬 {p.contact_other}</span>}</div></div>}
      </div>
     </div>
     {user.id!==id&&<div className="actions public-profile-actions">
