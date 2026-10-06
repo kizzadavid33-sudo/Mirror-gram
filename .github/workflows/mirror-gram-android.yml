@@ -8,6 +8,9 @@ on:
       - "apps/mobile/**"
       - ".github/workflows/mirror-gram-android.yml"
 
+permissions:
+  contents: write
+
 jobs:
   android:
     runs-on: ubuntu-latest
@@ -33,9 +36,19 @@ jobs:
         working-directory: apps/mobile/android
         run: ./gradlew assembleDebug --no-daemon
 
-      - name: Upload Mirror Gram APK
+      - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: Mirror_Gram_Android_APK
           path: apps/mobile/android/app/build/outputs/apk/debug/app-debug.apk
           retention-days: 14
+
+      - name: Publish APK to GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="mirror-gram-apk-${{ github.run_number }}"
+          gh release create "$TAG" \
+            "apps/mobile/android/app/build/outputs/apk/debug/app-debug.apk#Mirror Gram APK" \
+            --title "Mirror Gram APK ${{ github.run_number }}" \
+            --notes "Mirror Gram Android APK built from commit ${{ github.sha }}."
