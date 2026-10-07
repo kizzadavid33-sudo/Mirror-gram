@@ -77,27 +77,24 @@ export default async function HomePage() {
   }))
 
   const viewPosts = await Promise.all(mixedPosts.map(async p => {
-    const m = p.media?.[0]
-    let url = null
-    if (m) {
+    const mediaRows = (p.media ?? []) as any[]
+    const mediaItems = await Promise.all(mediaRows.map(async (m: any) => {
       const signed = await supabase.storage.from('post-media').createSignedUrl(m.storage_path, 3600)
-      url = signed.data?.signedUrl ?? null
-    }
-
+      return { id:m.id, storage_path:m.storage_path, media_type:m.media_type, url:signed.data?.signedUrl ?? null }
+    }))
+    const m = mediaRows[0]
+    const first = mediaItems[0]
     return {
-      id: p.id,
-      user_id: p.user_id,
-      caption: p.caption,
-      created_at: p.created_at,
-      username: (p.profiles as any)?.username ?? 'user',
-      display_name: (p.profiles as any)?.display_name ?? '',
-      mediaUrl: url,
-      mediaType: m?.media_type ?? null,
-      avatarUrl: (p.profiles as any)?.avatar_path ? ((await supabase.storage.from('avatars').createSignedUrl((p.profiles as any).avatar_path, 3600)).data?.signedUrl ?? null) : null,
-      likeCount: (likes ?? []).filter(x => x.post_id === p.id).length,
-      commentCount: (comments ?? []).filter(x => x.post_id === p.id).length,
-      liked: (likes ?? []).some(x => x.post_id === p.id && x.user_id === user.id),
-      saved: (saved ?? []).some(x => x.post_id === p.id),
+      id:p.id, user_id:p.user_id, caption:p.caption, created_at:p.created_at,
+      username:(p.profiles as any)?.username ?? 'user',
+      display_name:(p.profiles as any)?.display_name ?? '',
+      mediaUrl:first?.url ?? null, mediaType:m?.media_type ?? null, mediaPath:m?.storage_path ?? null,
+      mediaItems,
+      avatarUrl:(p.profiles as any)?.avatar_path ? ((await supabase.storage.from('avatars').createSignedUrl((p.profiles as any).avatar_path,3600)).data?.signedUrl ?? null) : null,
+      likeCount:(likes ?? []).filter(x=>x.post_id===p.id).length,
+      commentCount:(comments ?? []).filter(x=>x.post_id===p.id).length,
+      liked:(likes ?? []).some(x=>x.post_id===p.id && x.user_id===user.id),
+      saved:(saved ?? []).some(x=>x.post_id===p.id),
     }
   }))
 
