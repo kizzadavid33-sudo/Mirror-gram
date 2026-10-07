@@ -13,9 +13,9 @@ export type Database = {
         Relationships: []
       }
       posts: {
-        Row: { id: string; user_id: string; caption: string; visibility: string; created_at: string; updated_at: string }
-        Insert: { id?: string; user_id: string; caption?: string; visibility?: string; created_at?: string; updated_at?: string }
-        Update: { id?: string; user_id?: string; caption?: string; visibility?: string; created_at?: string; updated_at?: string }
+        Row: { id: string; user_id: string; caption: string; visibility: string; music_path: string | null; music_name: string | null; music_url: string | null; created_at: string; updated_at: string }
+        Insert: { id?: string; user_id: string; caption?: string; visibility?: string; music_path?: string | null; music_name?: string | null; music_url?: string | null; created_at?: string; updated_at?: string }
+        Update: { id?: string; user_id?: string; caption?: string; visibility?: string; music_path?: string | null; music_name?: string | null; music_url?: string | null; created_at?: string; updated_at?: string }
         Relationships: [{ foreignKeyName: "posts_user_id_fkey"; columns: ["user_id"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["id"] }]
       }
       media: {
