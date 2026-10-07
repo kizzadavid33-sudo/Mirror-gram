@@ -1,4 +1,5 @@
 name: Mirror Gram Source ZIP
+# Package current main source after each app update
 
 on:
   workflow_dispatch:
