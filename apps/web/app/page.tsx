@@ -18,7 +18,7 @@ export default async function HomePage() {
 
   const { data: posts, error: postsError } = await supabase
     .from('posts')
-    .select('id,user_id,caption,created_at,profiles!posts_user_id_fkey(username,display_name,avatar_path),media!media_post_id_fkey(id,storage_path,media_type)')
+    .select('id,user_id,caption,created_at,music_path,music_name,music_url,profiles!posts_user_id_fkey(username,display_name,avatar_path),media!media_post_id_fkey(id,storage_path,media_type)')
     .order('created_at', { ascending: false })
     .limit(60)
 
@@ -88,7 +88,7 @@ export default async function HomePage() {
       id:p.id, user_id:p.user_id, caption:p.caption, created_at:p.created_at,
       username:(p.profiles as any)?.username ?? 'user',
       display_name:(p.profiles as any)?.display_name ?? '',
-      mediaUrl:first?.url ?? null, mediaType:m?.media_type ?? null, mediaPath:m?.storage_path ?? null,
+      mediaUrl:first?.url ?? null, mediaType:m?.media_type ?? null, mediaPath:m?.storage_path ?? null, musicUrl:p.music_path ? ((await supabase.storage.from('post-music').createSignedUrl(p.music_path,3600)).data?.signedUrl ?? null) : (p.music_url ?? null), musicName:p.music_name ?? null,
       mediaItems,
       avatarUrl:(p.profiles as any)?.avatar_path ? ((await supabase.storage.from('avatars').createSignedUrl((p.profiles as any).avatar_path,3600)).data?.signedUrl ?? null) : null,
       likeCount:(likes ?? []).filter(x=>x.post_id===p.id).length,
