@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import FollowButton from './FollowButton'
 
-type Post = { id:string; user_id:string; caption:string; created_at:string; username:string; display_name:string; mediaUrl?:string|null; mediaType?:string|null; mediaPath?:string|null; mediaItems?:{id:string;storage_path:string;media_type:string;url:string|null}[]; avatarUrl?:string|null; likeCount:number; commentCount:number; liked:boolean; saved:boolean }
+type Post = { id:string; user_id:string; caption:string; created_at:string; username:string; display_name:string; mediaUrl?:string|null; mediaType?:string|null; mediaPath?:string|null; mediaItems?:{id:string;storage_path:string;media_type:string;url:string|null}[]; avatarUrl?:string|null; musicUrl?:string|null; musicName?:string|null; likeCount:number; commentCount:number; liked:boolean; saved:boolean }
 type Comment = { id:string; user_id:string; body:string; created_at:string; username?:string; display_name?:string }
 
 export default function PostCard({ post, canInteract = true }: { post:Post; canInteract?:boolean }) {
@@ -63,6 +63,7 @@ export default function PostCard({ post, canInteract = true }: { post:Post; canI
     </div>
     {editing?<div style={{display:'grid',gap:8,margin:'10px 0'}}><textarea value={caption} onChange={e=>setCaption(e.target.value)} maxLength={2200} autoFocus/><div style={{display:'flex',gap:8}}><button className="primary" onClick={saveCaption} disabled={busy}>{busy?'Saving…':'Save caption'}</button><button className="secondary" onClick={()=>{setCaption(post.caption);setEditing(false)}}>Cancel</button></div></div>:post.caption&&<p className="post-caption">{caption}</p>}
     <input ref={replaceRef} type="file" accept="image/*,video/*" onChange={e=>replaceMedia(e.target.files?.[0])} style={{display:'none'}}/>
+    {post.musicUrl&&<div className="post-music"><span>🎵</span><strong>{post.musicName||'Music'}</strong><audio controls preload="none" src={post.musicUrl}/></div>}
     {post.mediaItems?.length ? <div className="post-media-gallery">{post.mediaItems.map((m,i)=>m.url&&(m.media_type==='video'?<video key={m.id||i} className="post-media" controls playsInline preload="metadata" src={m.url}/>:<img key={m.id||i} className="post-media" src={m.url} alt={'Post media '+(i+1)} loading={i===0?'eager':'lazy'} decoding="async"/>))}</div> : post.mediaUrl&&(post.mediaType==='video'?<video className="post-media" controls playsInline preload="metadata" src={post.mediaUrl}/>:<img className="post-media" src={post.mediaUrl} alt="Post media" loading="eager" decoding="async"/>)}
     <div className="post-body">
       <div className="actions"><div className="reaction-wrap"><button onClick={()=>setShowReactions(v=>!v)} disabled={!canInteract}>{reaction?reactions.find(x=>x[0]===reaction)?.[1]:'👍'} {likes}</button>{showReactions&&<div className="reaction-picker">{reactions.map(r=><button key={r[0]} title={r[0]} onClick={()=>chooseReaction(r[0])}>{r[1]}</button>)}</div>}</div><button onClick={toggleLike} disabled={!canInteract}>{liked?'♥':'♡'} {likes}</button><button onClick={toggleComments}>{comments} comments</button><button onClick={toggleSave} disabled={!canInteract}>{saved?'Saved':'Save'}</button></div>
