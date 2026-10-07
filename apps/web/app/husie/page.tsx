@@ -38,11 +38,6 @@ export default async function HusiePage(){
  }))
 
  return <main className="husie-page">
-   <div className="husie-topbar">
-     <Link href="/" className="husie-back">← Mirror Gram</Link>
-     <strong>Husie</strong>
-     <Link href="/create" className="husie-create">＋</Link>
-   </div>
    {view.length
     ? <section className="husie-feed">{view.map(p=><HusieCard key={p.id} post={p}/>)}</section>
     : <section className="husie-empty"><h2>No Husie videos yet</h2><p>Publish a video and it will appear here.</p><Link className="primary link-button" href="/create">Create a video</Link></section>}
